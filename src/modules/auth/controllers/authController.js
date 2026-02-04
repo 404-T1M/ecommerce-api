@@ -2,10 +2,12 @@ const RegisterUseCase = require("../useCases/registerUseCase");
 const catchAsync = require("../../../shared/utils/catchAsync");
 
 class AuthController {
-  register = catchAsync(async (req, res, next) => {
-    const useCase = new RegisterUseCase();
+  constructor() {
+    this.registerUseCase = new RegisterUseCase();
+  }
 
-    const user = await useCase.execute(req.body);
+  register = catchAsync(async (req, res, next) => {
+    const user = await this.registerUseCase.execute(req.body);
     res.status(201).json({
       message: "Your Signed Up Successfully Please Confirm Your Email",
       data: user,

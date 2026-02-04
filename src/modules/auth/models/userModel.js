@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 
-
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -27,6 +26,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      select: false,
     },
     profileImage: {
       type: String,
@@ -56,8 +56,9 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     verificationCode: {
-      type: Number,
+      type: String,
       default: null,
+      select: false,
     },
     verificationCodeExpire: {
       type: Date,
