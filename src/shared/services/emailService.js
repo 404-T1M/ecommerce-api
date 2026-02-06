@@ -7,7 +7,7 @@ apiInstance.setApiKey(
 );
 
 class EmailService {
-  async sendVerificationEmail(toEmail, subject, content) {
+  async sendEmail(toEmail, subject, content) {
     const sendSmtpEmail = {
       sender: {
         name: "E-commerce",

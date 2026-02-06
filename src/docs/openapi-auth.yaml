@@ -1,0 +1,165 @@
+openapi: 3.0.3
+info:
+  title: E-commerce API - Register
+  version: 1.0.0
+  description: API contract for user registration.
+servers:
+  - url: /api/v1
+    description: Base path (environment-agnostic)
+paths:
+  /register:
+    post:
+      summary: Register a new user
+      description: Creates a new user and sends a verification code email (valid for 10 minutes).
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+            examples:
+              sample:
+                value:
+                  name: Mohamed Elsafi
+                  email: mohamed@example.com
+                  mobilePhone: "+201234567890"
+                  password: "P@ssw0rd!"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterSuccessResponse"
+              examples:
+                sample:
+                  value:
+                    message: Your Signed Up Successfully Please Confirm Your Email
+                    data:
+                      id: 65b1f0a2f7a1c2d3e4f5a678
+                      name: Mohamed Elsafi
+                      email: mohamed@example.com
+                      mobilePhone: "+201234567890"
+                      role: user
+                      emailVerified: false
+                      status: true
+                      createdAt: "2026-02-04T12:00:00.000Z"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                email_in_use:
+                  value:
+                    status: fail
+                    message: Email already in use
+                invalid_phone:
+                  value:
+                    status: fail
+                    message: Invalid phone number format
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                email_exists:
+                  value:
+                    status: fail
+                    message: email already exists
+                mobile_exists:
+                  value:
+                    status: fail
+                    message: mobilePhone already exists
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                server_error:
+                  value:
+                    status: error
+                    message: Internal Server Error
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - name
+        - email
+        - mobilePhone
+        - password
+      properties:
+        name:
+          type: string
+          description: Full name of the user.
+          example: Mohamed Elsafi
+        email:
+          type: string
+          format: email
+          description: Valid email address (stored lowercase).
+          example: mohamed@example.com
+        mobilePhone:
+          type: string
+          description: Valid international phone number, stored in E.164 format.
+          example: "+201234567890"
+        password:
+          type: string
+          format: password
+          description: User password.
+          example: "P@ssw0rd!"
+    RegisterSuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Your Signed Up Successfully Please Confirm Your Email
+        data:
+          $ref: "#/components/schemas/UserRegister"
+    UserRegister:
+      type: object
+      properties:
+        id:
+          type: string
+          description: User identifier.
+          example: 65b1f0a2f7a1c2d3e4f5a678
+        name:
+          type: string
+          example: Mohamed Elsafi
+        email:
+          type: string
+          format: email
+          example: mohamed@example.com
+        mobilePhone:
+          type: string
+          example: "+201234567890"
+        role:
+          type: string
+          example: user
+        emailVerified:
+          type: boolean
+          example: false
+        status:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-02-04T12:00:00.000Z"
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: "fail | error"
+          example: fail
+        message:
+          type: string
+          example: Email already in use

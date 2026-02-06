@@ -6,6 +6,7 @@ const { hashingPassword } = require("../../../shared/utils/passwordHasher");
 const { hashingCodes } = require("../../../shared/utils/codeHasher");
 const { codeGeneration } = require("../../../shared/utils/codeGeneration");
 const EmailService = require("../../../shared/services/emailService");
+const { phoneFormate } = require("../../../shared/utils/phoneValidator");
 
 class RegisterUseCase {
   constructor() {
@@ -14,23 +15,31 @@ class RegisterUseCase {
   }
 
   async execute(data) {
-    const existingUser = await this.userRepo.findByEmail(data.email);
-    if (existingUser) {
-      throw new AppError("Email already in use", 400);
+    const [existingEmail, existingPhone] = await Promise.all([
+      this.userRepo.findByEmail(data.email),
+      this.userRepo.findByPhone(phoneFormate(data.mobilePhone)),
+    ]);
+
+    if (existingEmail) {
+      throw new AppError("Email already in use", 409);
+    }
+
+    if (existingPhone) {
+      throw new AppError("Phone number already registered", 409);
     }
 
     const code = codeGeneration();
-    const hashedPassword = await hashingPassword(data.password);
     const hashedCode = await hashingCodes(code);
+    data.password = await hashingPassword(data.password);
+    data.mobilePhone = phoneFormate(data.mobilePhone);
 
-    const user = new User({
+    const user = User.createForRegister({
       ...data,
-      password: hashedPassword,
       verificationCode: hashedCode,
     });
     const savedUser = await this.userRepo.save(user);
 
-    await this.emailSender.sendVerificationEmail(
+    await this.emailSender.sendEmail(
       data.email,
       "Email Verification Code",
       `
