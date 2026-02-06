@@ -9,7 +9,7 @@ const authRoutes = require("./modules/auth/routes/authRoutes");
 
 connectDB();
 
-app.use("/api/v1", authRoutes);
+app.use("/api/v1/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({ status: "ok" });
