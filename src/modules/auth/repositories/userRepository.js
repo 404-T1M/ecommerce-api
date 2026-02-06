@@ -19,7 +19,7 @@ class userRepository {
   }
 
   async findByPhone(mobilePhone, options = {}) {
-    return this.findOne({ email }, options);
+    return this.findOne({ mobilePhone }, options);
   }
 
   async save(user) {
