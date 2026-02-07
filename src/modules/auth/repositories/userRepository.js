@@ -12,6 +12,10 @@ class userRepository {
       query = query.select("+verificationCode");
     }
 
+    if (options.withResetPasswordToken) {
+      query = query.select("+resetPasswordToken");
+    }
+
     return await query;
   }
   async findByEmail(email, options = {}) {

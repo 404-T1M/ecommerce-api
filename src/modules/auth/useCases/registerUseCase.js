@@ -6,6 +6,9 @@ const { hashingPassword } = require("../../../shared/utils/passwordHasher");
 const { hashingCodes } = require("../../../shared/utils/codeHasher");
 const { codeGeneration } = require("../../../shared/utils/codeGeneration");
 const EmailService = require("../../../shared/services/emailService");
+const {
+  sendVerificationCodeTemplate,
+} = require("../../../shared/services/templates/sendVerificationCodeTemplate");
 const { phoneFormate } = require("../../../shared/utils/phoneValidator");
 
 class RegisterUseCase {
@@ -42,12 +45,7 @@ class RegisterUseCase {
     await this.emailSender.sendEmail(
       data.email,
       "Email Verification Code",
-      `
-        <h2>Verification Code</h2>
-        <p>Your verification code is:</p>
-        <h3>${code}</h3>
-        <p>This code will expire in 10 minutes.</p>
-      `,
+      sendVerificationCodeTemplate(code),
     );
     return new RegisterResponseDTO(savedUser);
   }

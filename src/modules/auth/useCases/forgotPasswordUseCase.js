@@ -1,19 +1,18 @@
 const userRepository = require("../repositories/userRepository");
 const User = require("../entities/userEntity");
 const AppError = require("../../../core/errors/appError");
-const { hashingCodes } = require("../../../shared/utils/codeHasher");
-const { codeGeneration } = require("../../../shared/utils/codeGeneration");
+const ResetPasswordToken = require("../../../shared/utils/resetPasswordToken");
 const EmailService = require("../../../shared/services/emailService");
 const {
-  sendVerificationCodeTemplate,
-} = require("../../../shared/services/templates/sendVerificationCodeTemplate");
+  resetPasswordTemplate,
+} = require("../../../shared/services/templates/resetPasswordTemplate");
 
-class resendVerificationCodeUseCase {
+class ForgotPasswordUseCase {
   constructor() {
     this.userRepo = new userRepository();
     this.emailSender = new EmailService();
+    this.tokenService = new ResetPasswordToken();
   }
-
   async execute({ email }) {
     const user = await this.userRepo.findByEmail(email);
     if (!user) {
@@ -22,28 +21,27 @@ class resendVerificationCodeUseCase {
 
     const userEntity = new User(user);
     userEntity.activeUser();
+    userEntity.verifiedEmail();
 
-    if (user.emailVerified) {
-      throw new AppError("Already Verified", 400);
-    }
+    const resetToken = this.tokenService.createToken();
+    const hashedToken = this.tokenService.hashToken(resetToken);
 
-    const code = codeGeneration();
-    const hashedCode = await hashingCodes(code);
+    const resetUrl = `${process.env.CLIENT_URL}${resetToken}`;
 
     await this.userRepo.updateOne(
       { _id: user._id },
       {
-        verificationCode: hashedCode,
-        verificationCodeExpire: Date.now() + 1000 * 60 * 10,
+        resetPasswordToken: hashedToken,
+        resetPasswordExpires: Date.now() + 1000 * 60 * 10,
       },
     );
 
     await this.emailSender.sendEmail(
       user.email,
-      "Email Verification Code",
-      sendVerificationCodeTemplate(code),
+      "Reset Your Password",
+      resetPasswordTemplate(user.name, resetUrl),
     );
   }
 }
 
-module.exports = resendVerificationCodeUseCase;
+module.exports = ForgotPasswordUseCase;

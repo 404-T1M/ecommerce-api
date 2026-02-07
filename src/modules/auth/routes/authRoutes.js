@@ -20,4 +20,8 @@ router.post("/resend-verification-code", (req, res, next) => {
   controller.resendVerificationCode(req, res, next);
 });
 
+router.post("/forgot-password", (req, res, next) => {
+  controller.forgotPassword(req, res, next);
+});
+
 module.exports = router;
