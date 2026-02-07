@@ -25,6 +25,13 @@ class userRepository {
   async save(user) {
     return await User.create(user);
   }
+
+  async updateOne(filter, updates) {
+    return await User.findOneAndUpdate(filter, updates, {
+      new: true,
+      runValidators: true,
+    });
+  }
 }
 
 module.exports = userRepository;
