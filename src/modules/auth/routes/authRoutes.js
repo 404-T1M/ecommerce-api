@@ -16,4 +16,8 @@ router.post("/verify-email", (req, res, next) => {
   controller.verifyEmail(req, res, next);
 });
 
+router.post("/resend-verification-code", (req, res, next) => {
+  controller.resendVerificationCode(req, res, next);
+});
+
 module.exports = router;
