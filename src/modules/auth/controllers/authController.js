@@ -1,6 +1,7 @@
 const RegisterUseCase = require("../useCases/registerUseCase");
 const LoginUseCase = require("../useCases/loginUseCase");
 const VerifiedEmailUseCase = require("../useCases/verifyEmailUseCase");
+const ResendVerificationCodeUseCase = require("../useCases/resendVerificationCodeUseCase");
 const catchAsync = require("../../../shared/utils/catchAsync");
 
 class AuthController {
@@ -8,6 +9,7 @@ class AuthController {
     this.registerUseCase = new RegisterUseCase();
     this.loginUseCase = new LoginUseCase();
     this.verifyEmailUseCase = new VerifiedEmailUseCase();
+    this.resendVerificationCodeUseCase = new ResendVerificationCodeUseCase();
   }
 
   register = catchAsync(async (req, res, next) => {
@@ -30,6 +32,13 @@ class AuthController {
     await this.verifyEmailUseCase.execute(req.body);
     res.status(200).json({
       message: "Email Verified Successfully",
+    });
+  });
+
+  resendVerificationCode = catchAsync(async (req, res, next) => {
+    await this.resendVerificationCodeUseCase.execute(req.body);
+    res.status(200).json({
+      message: "Verification Code Was Send Successfully Check Your Email",
     });
   });
 }

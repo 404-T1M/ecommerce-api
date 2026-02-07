@@ -229,6 +229,70 @@ paths:
                   value:
                     status: error
                     message: Internal Server Error
+  /resend-verification-code:
+    post:
+      summary: Resend verification code
+      description: Sends a new verification code to the user's email (valid for 10 minutes).
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResendVerificationCodeRequest"
+            examples:
+              sample:
+                value:
+                  email: mohamed@example.com
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResendVerificationCodeResponse"
+              examples:
+                sample:
+                  value:
+                    message: Verification Code Was Send Successfully Check Your Email
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                already_verified:
+                  value:
+                    status: fail
+                    message: Already Verified
+                account_disabled:
+                  value:
+                    status: fail
+                    message: Account is disabled
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                user_not_found:
+                  value:
+                    status: fail
+                    message: User Not Found
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                server_error:
+                  value:
+                    status: error
+                    message: Internal Server Error
 components:
   schemas:
     RegisterRequest:
@@ -382,6 +446,21 @@ components:
         message:
           type: string
           example: Email Verified Successfully
+    ResendVerificationCodeRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          example: mohamed@example.com
+    ResendVerificationCodeResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Verification Code Was Send Successfully Check Your Email
     ErrorResponse:
       type: object
       properties:
