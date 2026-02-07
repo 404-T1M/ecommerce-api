@@ -12,4 +12,8 @@ router.post("/login", (req, res, next) => {
   controller.login(req, res, next);
 });
 
+router.post("/verify-email", (req, res, next) => {
+  controller.verifyEmail(req, res, next);
+});
+
 module.exports = router;

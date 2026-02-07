@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
-  title: E-commerce API - Register
+  title: E-commerce API - Auth
   version: 1.0.0
-  description: API contract for user registration.
+  description: API contract for authentication endpoints.
 servers:
   - url: /api/v1
     description: Base path (environment-agnostic)
@@ -53,10 +53,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
               examples:
-                email_in_use:
-                  value:
-                    status: fail
-                    message: Email already in use
                 invalid_phone:
                   value:
                     status: fail
@@ -71,11 +67,157 @@ paths:
                 email_exists:
                   value:
                     status: fail
-                    message: email already exists
-                mobile_exists:
+                    message: Email already in use
+                phone_exists:
                   value:
                     status: fail
-                    message: mobilePhone already exists
+                    message: Phone number already registered
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                server_error:
+                  value:
+                    status: error
+                    message: Internal Server Error
+  /login:
+    post:
+      summary: Login
+      description: Login using email or mobile phone with password.
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+            examples:
+              login_with_email:
+                value:
+                  email: mohamed@example.com
+                  password: "P@ssw0rd!"
+              login_with_phone:
+                value:
+                  mobilePhone: "+201234567890"
+                  password: "P@ssw0rd!"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginSuccessResponse"
+              examples:
+                sample:
+                  value:
+                    message: Login Successfully
+                    data:
+                      id: 65b1f0a2f7a1c2d3e4f5a678
+                      name: Mohamed Elsafi
+                      email: mohamed@example.com
+                      mobilePhone: "+201234567890"
+                      role: user
+                      emailVerified: true
+                      status: true
+                      createdAt: "2026-02-04T12:00:00.000Z"
+                      profileImage: default-avatar_edu8jh
+                      token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                missing_identifier:
+                  value:
+                    status: fail
+                    message: Use Email Or Mobile Phone To login
+                user_not_exist:
+                  value:
+                    status: fail
+                    message: User Not Exist
+                wrong_password:
+                  value:
+                    status: fail
+                    message: Wrong Email Or Password
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                server_error:
+                  value:
+                    status: error
+                    message: Internal Server Error
+  /verify-email:
+    post:
+      summary: Verify email
+      description: Verifies a user's email using the 6-digit code sent via email.
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyEmailRequest"
+            examples:
+              sample:
+                value:
+                  email: mohamed@example.com
+                  code: "123456"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyEmailSuccessResponse"
+              examples:
+                sample:
+                  value:
+                    message: Email Verified Successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                already_verified:
+                  value:
+                    status: fail
+                    message: Email Already verified
+                code_expired:
+                  value:
+                    status: fail
+                    message: Code Expired
+                wrong_code:
+                  value:
+                    status: fail
+                    message: Wrong Code!
+                account_disabled:
+                  value:
+                    status: fail
+                    message: Account is disabled
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                user_not_found:
+                  value:
+                    status: fail
+                    message: User not found
         "500":
           description: Internal Server Error
           content:
@@ -153,6 +295,93 @@ components:
           type: string
           format: date-time
           example: "2026-02-04T12:00:00.000Z"
+    LoginRequest:
+      type: object
+      description: Provide email or mobilePhone with password.
+      properties:
+        email:
+          type: string
+          format: email
+          example: mohamed@example.com
+        mobilePhone:
+          type: string
+          example: "+201234567890"
+        password:
+          type: string
+          format: password
+          example: "P@ssw0rd!"
+      oneOf:
+        - required:
+            - email
+            - password
+        - required:
+            - mobilePhone
+            - password
+    LoginSuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Login Successfully
+        data:
+          $ref: "#/components/schemas/UserLogin"
+    UserLogin:
+      type: object
+      properties:
+        id:
+          type: string
+          description: User identifier.
+          example: 65b1f0a2f7a1c2d3e4f5a678
+        name:
+          type: string
+          example: Mohamed Elsafi
+        email:
+          type: string
+          format: email
+          example: mohamed@example.com
+        mobilePhone:
+          type: string
+          example: "+201234567890"
+        role:
+          type: string
+          example: user
+        emailVerified:
+          type: boolean
+          example: true
+        status:
+          type: boolean
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-02-04T12:00:00.000Z"
+        profileImage:
+          type: string
+          example: default-avatar_edu8jh
+        token:
+          type: string
+          description: JWT access token.
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    VerifyEmailRequest:
+      type: object
+      required:
+        - email
+        - code
+      properties:
+        email:
+          type: string
+          format: email
+          example: mohamed@example.com
+        code:
+          type: string
+          pattern: "^[0-9]{6}$"
+          example: "123456"
+    VerifyEmailSuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Email Verified Successfully
     ErrorResponse:
       type: object
       properties:

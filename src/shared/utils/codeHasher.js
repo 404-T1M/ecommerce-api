@@ -14,3 +14,9 @@ exports.hashingCodes = async (code) => {
 exports.compareCode = async (enteredCode, hashedCode) => {
   return await bcrypt.compare(enteredCode, hashedCode);
 };
+
+exports.codeExpired = (expireDate) => {
+  if (new Date() > expireDate) {
+    throw new AppError("Code Expired", 400);
+  }
+};
