@@ -24,4 +24,8 @@ router.post("/forgot-password", (req, res, next) => {
   controller.forgotPassword(req, res, next);
 });
 
+router.patch("/reset-password/:token", (req, res, next) => {
+  controller.ResetPassword(req, res, next);
+});
+
 module.exports = router;

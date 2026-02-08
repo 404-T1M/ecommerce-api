@@ -3,6 +3,7 @@ const LoginUseCase = require("../useCases/loginUseCase");
 const VerifiedEmailUseCase = require("../useCases/verifyEmailUseCase");
 const ResendVerificationCodeUseCase = require("../useCases/resendVerificationCodeUseCase");
 const ForgotPasswordUseCase = require("../useCases/forgotPasswordUseCase");
+const ResetPasswordUseCase = require("../useCases/resetPasswordUseCase");
 const catchAsync = require("../../../shared/utils/catchAsync");
 
 class AuthController {
@@ -12,6 +13,7 @@ class AuthController {
     this.verifyEmailUseCase = new VerifiedEmailUseCase();
     this.resendVerificationCodeUseCase = new ResendVerificationCodeUseCase();
     this.forgotPasswordUseCase = new ForgotPasswordUseCase();
+    this.resetPasswordUseCase = new ResetPasswordUseCase();
   }
 
   register = catchAsync(async (req, res, next) => {
@@ -48,6 +50,13 @@ class AuthController {
     await this.forgotPasswordUseCase.execute(req.body);
     res.status(200).json({
       message: "Reset Password Link Was Send Successfully Check Your Email",
+    });
+  });
+
+  ResetPassword = catchAsync(async (req, res, next) => {
+    await this.resetPasswordUseCase.execute(req);
+    res.status(200).json({
+      message: "Password Changed Successfully",
     });
   });
 }
