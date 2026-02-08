@@ -293,6 +293,131 @@ paths:
                   value:
                     status: error
                     message: Internal Server Error
+  /forgot-password:
+    post:
+      summary: Forgot password
+      description: Sends a reset password link to the user's email (token valid for 10 minutes).
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordRequest"
+            examples:
+              sample:
+                value:
+                  email: mohamed@example.com
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForgotPasswordResponse"
+              examples:
+                sample:
+                  value:
+                    message: Reset Password Link Was Send Successfully Check Your Email
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                email_not_verified:
+                  value:
+                    status: fail
+                    message: Email is not verified
+                account_disabled:
+                  value:
+                    status: fail
+                    message: Account is disabled
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                user_not_found:
+                  value:
+                    status: fail
+                    message: User Not Found
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                server_error:
+                  value:
+                    status: error
+                    message: Internal Server Error
+  /reset-password/{token}:
+    patch:
+      summary: Reset password
+      description: Resets the user's password using the token from the reset email.
+      tags:
+        - Auth
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 9b1cfd7a2a8a4a1a9f0c1d3f5e7b9c2d1a3b4c5d6e7f8a9b0c1d2e3f4a5b
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordRequest"
+            examples:
+              sample:
+                value:
+                  password: "NewP@ssw0rd!"
+                  confirmPassword: "NewP@ssw0rd!"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResetPasswordResponse"
+              examples:
+                sample:
+                  value:
+                    message: Password Changed Successfully
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                token_invalid:
+                  value:
+                    status: fail
+                    message: Token Invalid Or Expired
+                password_mismatch:
+                  value:
+                    status: fail
+                    message: Password and Confirm Password Must Be Match
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                server_error:
+                  value:
+                    status: error
+                    message: Internal Server Error
 components:
   schemas:
     RegisterRequest:
@@ -461,6 +586,41 @@ components:
         message:
           type: string
           example: Verification Code Was Send Successfully Check Your Email
+    ForgotPasswordRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          example: mohamed@example.com
+    ForgotPasswordResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Reset Password Link Was Send Successfully Check Your Email
+    ResetPasswordRequest:
+      type: object
+      required:
+        - password
+        - confirmPassword
+      properties:
+        password:
+          type: string
+          format: password
+          example: "NewP@ssw0rd!"
+        confirmPassword:
+          type: string
+          format: password
+          example: "NewP@ssw0rd!"
+    ResetPasswordResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Password Changed Successfully
     ErrorResponse:
       type: object
       properties:
