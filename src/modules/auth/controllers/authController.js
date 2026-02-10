@@ -4,6 +4,7 @@ const VerifiedEmailUseCase = require("../useCases/verifyEmailUseCase");
 const ResendVerificationCodeUseCase = require("../useCases/resendVerificationCodeUseCase");
 const ForgotPasswordUseCase = require("../useCases/forgotPasswordUseCase");
 const ResetPasswordUseCase = require("../useCases/resetPasswordUseCase");
+const AdminListUsersUseCase = require("../useCases/adminListUsersUseCase");
 const catchAsync = require("../../../shared/utils/catchAsync");
 
 class AuthController {
@@ -14,6 +15,7 @@ class AuthController {
     this.resendVerificationCodeUseCase = new ResendVerificationCodeUseCase();
     this.forgotPasswordUseCase = new ForgotPasswordUseCase();
     this.resetPasswordUseCase = new ResetPasswordUseCase();
+    this.adminListUsersUseCase = new AdminListUsersUseCase();
   }
 
   register = catchAsync(async (req, res, next) => {
@@ -57,6 +59,22 @@ class AuthController {
     await this.resetPasswordUseCase.execute(req);
     res.status(200).json({
       message: "Password Changed Successfully",
+    });
+  });
+
+  listAllUsers = catchAsync(async (req, res, next) => {
+    const user = req.user;
+    const filter = {
+      status: req.query.status,
+      emailVerified: req.query.emailVerified,
+      fromDate: req.query.fromDate,
+      toDate: req.query.toDate,
+      page: Number(req.query.page) || 1,
+      limit: Number(req.query.limit) || 10,
+    };
+    const users = await this.adminListUsersUseCase.execute(user, filter);
+    res.status(200).json({
+      users,
     });
   });
 }

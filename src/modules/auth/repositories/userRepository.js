@@ -1,6 +1,31 @@
 const User = require("../models/userModel");
 
 class userRepository {
+  async find(filters) {
+    const query = {};
+
+    if (filters.status) {
+      query.status = filters.status;
+    }
+
+    if (filters.emailVerified) {
+      query.emailVerified = filters.emailVerified;
+    }
+
+    if (filters.fromDate || filters.toDate) {
+      query.createdAt = {};
+      if (filters.fromDate) {
+        query.createdAt.$gte = new Date(filters.fromDate);
+      }
+      if (filters.toDate) {
+        query.createdAt.$lte = new Date(filters.toDate);
+      }
+    }
+
+    return User.find(query)
+      .skip((filters.page - 1) * filters.limit)
+      .limit(filters.limit);
+  }
   async findOne(filter, options = {}) {
     let query = User.findOne(filter);
 
