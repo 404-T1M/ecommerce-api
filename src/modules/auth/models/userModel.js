@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
     email: {
       type: String,
       required: true,
@@ -18,23 +19,27 @@ const userSchema = new mongoose.Schema(
         message: "Invalid email format",
       },
     },
+
     mobilePhone: {
       type: String,
       required: true,
       unique: true,
     },
+
     password: {
       type: String,
       required: true,
       select: false,
     },
+
     profileImage: {
       type: String,
       default: "default-avatar_edu8jh",
     },
+
     role: {
       type: String,
-      enum: ["superAdmin","admin", "user"],
+      enum: ["superAdmin", "admin", "user"],
       default: "user",
     },
 
@@ -47,23 +52,34 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+
     tokenVersion: {
       type: Number,
       default: 0,
     },
+
     emailVerified: {
       type: Boolean,
       default: false,
     },
+
     verificationCode: {
       type: String,
       default: null,
       select: false,
     },
+
     verificationCodeExpire: {
       type: Date,
     },
+
     resetPasswordToken: { type: String },
+
     resetPasswordExpires: { type: Date },
   },
   {
@@ -72,5 +88,7 @@ const userSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   },
 );
+
+userSchema.index({ name: 1 });
 
 module.exports = mongoose.model("User", userSchema);

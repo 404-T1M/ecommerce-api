@@ -21,6 +21,7 @@ class resendVerificationCodeUseCase {
     }
 
     const userEntity = new User(user);
+    userEntity.deletedUser();
     userEntity.activeUser();
 
     if (user.emailVerified) {

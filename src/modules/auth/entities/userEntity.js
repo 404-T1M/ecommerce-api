@@ -10,6 +10,7 @@ class User {
     this.googleId = data.googleId;
     this.emailVerified = data.emailVerified;
     this.status = data.status;
+    this.isDeleted = data.isDeleted;
     this.verificationCode = data.verificationCode;
     this.verificationCodeExpire = data.verificationCodeExpire;
   }
@@ -37,6 +38,12 @@ class User {
   activeUser() {
     if (!this.status) {
       throw new AppError("Account is disabled");
+    }
+  }
+
+  deletedUser() {
+    if (this.isDeleted) {
+      throw new AppError("Account is Deleted");
     }
   }
 }

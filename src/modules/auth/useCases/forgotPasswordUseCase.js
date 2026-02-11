@@ -15,11 +15,12 @@ class ForgotPasswordUseCase {
   }
   async execute({ email }) {
     const user = await this.userRepo.findByEmail(email);
-    if (!user) {
+    if (!user || user.isDeleted) {
       throw new AppError("User Not Found", 404);
     }
 
     const userEntity = new User(user);
+    userEntity.deletedUser();
     userEntity.activeUser();
     userEntity.verifiedEmail();
 

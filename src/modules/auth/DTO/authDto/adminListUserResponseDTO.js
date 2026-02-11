@@ -8,6 +8,7 @@ class AdminListUserResponseDTO {
     this.profileImage = user.profileImage;
     this.emailVerified = user.emailVerified;
     this.status = user.status;
+    this.isDeleted = user.isDeleted;
     this.createdAt = user.createdAt;
   }
 }

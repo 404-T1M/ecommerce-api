@@ -39,4 +39,31 @@ router.get(
   },
 );
 
+router.get(
+  "/admin/users/:userId",
+  protect,
+  restrictTo("superAdmin"),
+  (req, res, next) => {
+    controller.getUserDetails(req, res, next);
+  },
+);
+
+router.patch(
+  "/admin/users/:userId/update-status",
+  protect,
+  restrictTo("superAdmin"),
+  (req, res, next) => {
+    controller.changeUserStatus(req, res, next);
+  },
+);
+
+router.delete(
+  "/admin/users/:userId/delete",
+  protect,
+  restrictTo("superAdmin"),
+  (req, res, next) => {
+    controller.deleteUser(req, res, next);
+  },
+);
+
 module.exports = router;

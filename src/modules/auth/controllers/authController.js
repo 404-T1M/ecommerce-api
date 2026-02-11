@@ -5,6 +5,9 @@ const ResendVerificationCodeUseCase = require("../useCases/resendVerificationCod
 const ForgotPasswordUseCase = require("../useCases/forgotPasswordUseCase");
 const ResetPasswordUseCase = require("../useCases/resetPasswordUseCase");
 const AdminListUsersUseCase = require("../useCases/adminListUsersUseCase");
+const GetUserDetailsUseCase = require("../useCases/getUserDetailsUseCase");
+const ChangeUserStatusUseCase = require("../useCases/changeUserStatusUseCase");
+const DeleteUserUseCase = require("../useCases/deleteUserUseCase");
 const catchAsync = require("../../../shared/utils/catchAsync");
 
 class AuthController {
@@ -16,6 +19,10 @@ class AuthController {
     this.forgotPasswordUseCase = new ForgotPasswordUseCase();
     this.resetPasswordUseCase = new ResetPasswordUseCase();
     this.adminListUsersUseCase = new AdminListUsersUseCase();
+    this.adminListUsersUseCase = new AdminListUsersUseCase();
+    this.getUserDetailsUseCase = new GetUserDetailsUseCase();
+    this.changeUserStatusUseCase = new ChangeUserStatusUseCase();
+    this.deleteUserUseCase = new DeleteUserUseCase();
   }
 
   register = catchAsync(async (req, res, next) => {
@@ -65,6 +72,7 @@ class AuthController {
   listAllUsers = catchAsync(async (req, res, next) => {
     const user = req.user;
     const filter = {
+      name: req.query.name,
       status: req.query.status,
       emailVerified: req.query.emailVerified,
       fromDate: req.query.fromDate,
@@ -72,9 +80,39 @@ class AuthController {
       page: Number(req.query.page) || 1,
       limit: Number(req.query.limit) || 10,
     };
-    const users = await this.adminListUsersUseCase.execute(user, filter);
+    const result = await this.adminListUsersUseCase.execute(user, filter);
     res.status(200).json({
-      users,
+      users: result.data,
+      meta: result.meta,
+    });
+  });
+
+  getUserDetails = catchAsync(async (req, res, next) => {
+    const user = req.user;
+    const { customerId } = req.params;
+    const result = await this.getUserDetailsUseCase.execute(user, customerId);
+    res.status(200).json({
+      user: result,
+    });
+  });
+
+  changeUserStatus = catchAsync(async (req, res, nex) => {
+    const user = req.user;
+    const { customerId } = req.params;
+    const result = await this.changeUserStatusUseCase.execute(user, customerId);
+    res.status(200).json({
+      message: "User Status Changed Successfully",
+      user: result,
+    });
+  });
+
+  deleteUser = catchAsync(async (req, res, nex) => {
+    const user = req.user;
+    const { customerId } = req.params;
+    const result = await this.deleteUserUseCase.execute(user, customerId);
+    res.status(200).json({
+      message: "User Deleted Successfully",
+      user: result,
     });
   });
 }
