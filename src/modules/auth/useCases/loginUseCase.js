@@ -29,8 +29,9 @@ class LoginUseCase {
     if (!matchedPassword) {
       throw new AppError("Wrong Email Or Password", 400);
     }
-    
+
     const userEntity = new User(user);
+    userEntity.deletedUser();
     userEntity.activeUser();
     userEntity.verifiedEmail();
 

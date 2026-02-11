@@ -2,10 +2,14 @@ const User = require("../models/userModel");
 
 class userRepository {
   async find(filters) {
-    const query = {};
+    const query = { role: "user", isDeleted: false };
 
     if (filters.status) {
       query.status = filters.status;
+    }
+
+    if (filters.name) {
+      query.name = { $regex: filters.name, $options: "i" };
     }
 
     if (filters.emailVerified) {
@@ -43,6 +47,7 @@ class userRepository {
 
     return await query;
   }
+
   async findByEmail(email, options = {}) {
     return this.findOne({ email }, options);
   }
