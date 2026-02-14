@@ -1,0 +1,66 @@
+adminAuthLogin:
+  post:
+    summary: Admin login
+    description: Login as an admin using email and password.
+    tags:
+      - Admin
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/index.yaml#/AdminLoginRequest"
+          examples:
+            sample:
+              value:
+                email: admin@example.com
+                password: "P@ssw0rd!"
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/AdminLoginSuccessResponse"
+            examples:
+              sample:
+                value:
+                  message: Login Successfully
+                  data:
+                    id: 65b1f0a2f7a1c2d3e4f5a678
+                    name: Admin User
+                    email: admin@example.com
+                    mobilePhone: "+201234567890"
+                    role: admin
+                    adminGroup: 65b1f0a2f7a1c2d3e4f5a999
+                    emailVerified: true
+                    status: true
+                    createdAt: "2026-02-04T12:00:00.000Z"
+                    profileImage: default-avatar_edu8jh
+                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              admin_not_exist:
+                value:
+                  status: fail
+                  message: Admin Not Exist
+              wrong_password:
+                value:
+                  status: fail
+                  message: Wrong Email Or Password
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              server_error:
+                value:
+                  status: error
+                  message: Internal Server Error

@@ -1,0 +1,253 @@
+adminUsers:
+  get:
+    summary: List users
+    description: Returns a paginated list of users.
+    tags:
+      - Users
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: name
+        in: query
+        schema:
+          type: string
+        description: Filter by name (partial match).
+      - name: status
+        in: query
+        schema:
+          type: boolean
+        description: Filter by user status.
+      - name: emailVerified
+        in: query
+        schema:
+          type: boolean
+        description: Filter by email verification status.
+      - name: fromDate
+        in: query
+        schema:
+          type: string
+          format: date-time
+        description: Filter by createdAt >= fromDate.
+      - name: toDate
+        in: query
+        schema:
+          type: string
+          format: date-time
+        description: Filter by createdAt <= toDate.
+      - name: page
+        in: query
+        schema:
+          type: integer
+          example: 1
+        description: Page number.
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          example: 10
+        description: Page size.
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/UserListResponse"
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              not_logged_in:
+                value:
+                  status: fail
+                  message: You are not logged in! Please log in to get access
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              forbidden:
+                value:
+                  status: fail
+                  message: Forbidden
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+adminUserDetails:
+  get:
+    summary: Get user details
+    tags:
+      - Users
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/UserDetailsResponse"
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              user_not_found:
+                value:
+                  status: fail
+                  message: User Not Found
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+adminUserUpdateStatus:
+  patch:
+    summary: Change user status
+    tags:
+      - Users
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/UserActionResponse"
+            examples:
+              sample:
+                value:
+                  message: User Status Changed Successfully
+                  user:
+                    id: 65b1f0a2f7a1c2d3e4f5a678
+                    name: Mohamed Elsafi
+                    email: mohamed@example.com
+                    mobilePhone: "+201234567890"
+                    role: user
+                    adminGroup: null
+                    profileImage: default-avatar_edu8jh
+                    emailVerified: true
+                    status: false
+                    createdAt: "2026-02-04T12:00:00.000Z"
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+adminUserDelete:
+  delete:
+    summary: Delete user
+    tags:
+      - Users
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/UserActionResponse"
+            examples:
+              sample:
+                value:
+                  message: User Deleted Successfully
+                  user:
+                    id: 65b1f0a2f7a1c2d3e4f5a678
+                    name: Mohamed Elsafi
+                    email: mohamed@example.com
+                    mobilePhone: "+201234567890"
+                    role: user
+                    adminGroup: null
+                    profileImage: default-avatar_edu8jh
+                    emailVerified: true
+                    status: false
+                    createdAt: "2026-02-04T12:00:00.000Z"
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"

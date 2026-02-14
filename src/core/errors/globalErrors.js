@@ -15,12 +15,11 @@ module.exports = (err, req, res, next) => {
     err = new AppError(`${field} already exists`, 409);
   }
 
-  // 🎯 حدد الـ statusCode والـ status
   const statusCode = err.statusCode || 500;
-  const status = err.statusCode && err.statusCode < 500 ? 'fail' : 'error'; // 🔥
+  const status = err.statusCode && err.statusCode < 500 ? 'fail' : 'error';
 
   res.status(statusCode).json({
-    status,  // 🎯 بدل "error" الثابتة
+    status,
     message: err.message || "Internal Server Error"
   });
 };
