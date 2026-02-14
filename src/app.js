@@ -5,11 +5,13 @@ const app = express();
 app.use(express.json());
 
 //ROUTES
-const authRoutes = require("./modules/auth/routes/authRoutes");
+const usersRoutes = require("./modules/users/routes/usersRoutes");
+const adminGroupRoutes = require("./modules/administratorsGroup/routes/adminGroupRoutes");
 
 connectDB();
 
-app.use("/api/v1", authRoutes);
+app.use("/api/v1", usersRoutes);
+app.use("/api/v1/admin", adminGroupRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({ status: "ok" });

@@ -1,0 +1,541 @@
+RegisterRequest:
+  type: object
+  required:
+    - name
+    - email
+    - mobilePhone
+    - password
+  properties:
+    name:
+      type: string
+      description: Full name of the user.
+      example: Mohamed Elsafi
+    email:
+      type: string
+      format: email
+      description: Valid email address (stored lowercase).
+      example: mohamed@example.com
+    mobilePhone:
+      type: string
+      description: Valid international phone number, stored in E.164 format.
+      example: "+201234567890"
+    password:
+      type: string
+      format: password
+      description: User password.
+      example: "P@ssw0rd!"
+
+RegisterSuccessResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Your Signed Up Successfully Please Confirm Your Email
+    data:
+      $ref: "#/UserRegister"
+
+UserRegister:
+  type: object
+  properties:
+    id:
+      type: string
+      description: User identifier.
+      example: 65b1f0a2f7a1c2d3e4f5a678
+    name:
+      type: string
+      example: Mohamed Elsafi
+    email:
+      type: string
+      format: email
+      example: mohamed@example.com
+    mobilePhone:
+      type: string
+      example: "+201234567890"
+    role:
+      type: string
+      example: user
+    emailVerified:
+      type: boolean
+      example: false
+    status:
+      type: boolean
+      example: true
+    createdAt:
+      type: string
+      format: date-time
+      example: "2026-02-04T12:00:00.000Z"
+
+LoginRequest:
+  type: object
+  description: Provide email or mobilePhone with password.
+  properties:
+    email:
+      type: string
+      format: email
+      example: mohamed@example.com
+    mobilePhone:
+      type: string
+      example: "+201234567890"
+    password:
+      type: string
+      format: password
+      example: "P@ssw0rd!"
+  oneOf:
+    - required:
+        - email
+        - password
+    - required:
+        - mobilePhone
+        - password
+
+LoginSuccessResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Login Successfully
+    data:
+      $ref: "#/UserLogin"
+
+UserLogin:
+  type: object
+  properties:
+    id:
+      type: string
+      description: User identifier.
+      example: 65b1f0a2f7a1c2d3e4f5a678
+    name:
+      type: string
+      example: Mohamed Elsafi
+    email:
+      type: string
+      format: email
+      example: mohamed@example.com
+    mobilePhone:
+      type: string
+      example: "+201234567890"
+    role:
+      type: string
+      example: user
+    emailVerified:
+      type: boolean
+      example: true
+    status:
+      type: boolean
+      example: true
+    createdAt:
+      type: string
+      format: date-time
+      example: "2026-02-04T12:00:00.000Z"
+    profileImage:
+      type: string
+      example: default-avatar_edu8jh
+    token:
+      type: string
+      description: JWT access token.
+      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+VerifyEmailRequest:
+  type: object
+  required:
+    - email
+    - code
+  properties:
+    email:
+      type: string
+      format: email
+      example: mohamed@example.com
+    code:
+      type: string
+      pattern: "^[0-9]{6}$"
+      example: "123456"
+
+VerifyEmailSuccessResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Email Verified Successfully
+
+ResendVerificationCodeRequest:
+  type: object
+  required:
+    - email
+  properties:
+    email:
+      type: string
+      format: email
+      example: mohamed@example.com
+
+ResendVerificationCodeResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Verification Code Was Send Successfully Check Your Email
+
+ForgotPasswordRequest:
+  type: object
+  required:
+    - email
+  properties:
+    email:
+      type: string
+      format: email
+      example: mohamed@example.com
+
+ForgotPasswordResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Reset Password Link Was Send Successfully Check Your Email
+
+ResetPasswordRequest:
+  type: object
+  required:
+    - password
+    - confirmPassword
+  properties:
+    password:
+      type: string
+      format: password
+      example: "NewP@ssw0rd!"
+    confirmPassword:
+      type: string
+      format: password
+      example: "NewP@ssw0rd!"
+
+ResetPasswordResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Password Changed Successfully
+
+AdminLoginRequest:
+  type: object
+  required:
+    - email
+    - password
+  properties:
+    email:
+      type: string
+      format: email
+      example: admin@example.com
+    password:
+      type: string
+      format: password
+      example: "P@ssw0rd!"
+
+AdminLoginSuccessResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Login Successfully
+    data:
+      $ref: "#/AdminLoginData"
+
+AdminLoginData:
+  type: object
+  properties:
+    id:
+      type: string
+      example: 65b1f0a2f7a1c2d3e4f5a678
+    name:
+      type: string
+      example: Admin User
+    email:
+      type: string
+      format: email
+      example: admin@example.com
+    mobilePhone:
+      type: string
+      example: "+201234567890"
+    role:
+      type: string
+      example: admin
+    adminGroup:
+      type: string
+      example: 65b1f0a2f7a1c2d3e4f5a999
+    emailVerified:
+      type: boolean
+      example: true
+    status:
+      type: boolean
+      example: true
+    createdAt:
+      type: string
+      format: date-time
+      example: "2026-02-04T12:00:00.000Z"
+    profileImage:
+      type: string
+      example: default-avatar_edu8jh
+    token:
+      type: string
+      description: JWT access token.
+      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+UserListItem:
+  type: object
+  properties:
+    id:
+      type: string
+      example: 65b1f0a2f7a1c2d3e4f5a678
+    name:
+      type: string
+      example: Mohamed Elsafi
+    email:
+      type: string
+      format: email
+      example: mohamed@example.com
+    mobilePhone:
+      type: string
+      example: "+201234567890"
+    role:
+      type: string
+      example: user
+    adminGroup:
+      type: string
+      nullable: true
+      example: 65b1f0a2f7a1c2d3e4f5a999
+    profileImage:
+      type: string
+      example: default-avatar_edu8jh
+    emailVerified:
+      type: boolean
+      example: true
+    status:
+      type: boolean
+      example: true
+    createdAt:
+      type: string
+      format: date-time
+      example: "2026-02-04T12:00:00.000Z"
+
+UserListResponse:
+  type: object
+  properties:
+    users:
+      type: array
+      items:
+        $ref: "#/UserListItem"
+    meta:
+      $ref: "#/MetaPagination"
+
+UserDetailsResponse:
+  type: object
+  properties:
+    user:
+      $ref: "#/UserListItem"
+
+UserActionResponse:
+  type: object
+  properties:
+    message:
+      type: string
+    user:
+      $ref: "#/UserListItem"
+
+MetaPagination:
+  type: object
+  properties:
+    total:
+      type: integer
+      example: 50
+    page:
+      type: integer
+      example: 1
+    limit:
+      type: integer
+      example: 10
+
+MetaTotal:
+  type: object
+  properties:
+    total:
+      type: integer
+      example: 5
+
+MessageResponse:
+  type: object
+  properties:
+    message:
+      type: string
+
+AddAdminRequest:
+  type: object
+  required:
+    - name
+    - email
+    - mobilePhone
+    - password
+    - adminGroup
+  properties:
+    name:
+      type: string
+      example: Admin User
+    email:
+      type: string
+      format: email
+      example: admin@example.com
+    mobilePhone:
+      type: string
+      example: "+201234567890"
+    password:
+      type: string
+      format: password
+      example: "P@ssw0rd!"
+    adminGroup:
+      type: string
+      example: 65b1f0a2f7a1c2d3e4f5a999
+
+UpdateAdminGroupRequest:
+  type: object
+  required:
+    - adminGroup
+  properties:
+    adminGroup:
+      type: string
+      example: 65b1f0a2f7a1c2d3e4f5a999
+
+AdminGroupRequest:
+  type: object
+  required:
+    - name
+    - permissions
+  properties:
+    name:
+      type: string
+      example: Super Admins
+    permissions:
+      type: array
+      items:
+        $ref: "#/Permission"
+
+AdminGroupUpdateRequest:
+  type: object
+  properties:
+    name:
+      type: string
+      example: Super Admins
+    permissions:
+      type: array
+      items:
+        $ref: "#/Permission"
+
+AdminGroup:
+  type: object
+  properties:
+    id:
+      type: string
+      example: 65b1f0a2f7a1c2d3e4f5a777
+    name:
+      type: string
+      example: Super Admins
+    permissions:
+      type: array
+      items:
+        $ref: "#/Permission"
+    createdAt:
+      type: string
+      format: date-time
+      example: "2026-02-04T12:00:00.000Z"
+
+AdminGroupCreateResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Admin Group Created Successfully
+    data:
+      $ref: "#/AdminGroup"
+
+AdminGroupListResponse:
+  type: object
+  properties:
+    adminGroups:
+      type: array
+      items:
+        $ref: "#/AdminGroup"
+    meta:
+      $ref: "#/MetaTotal"
+
+AdminGroupUpdateResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Admin Group Updating Successfully
+    adminGroups:
+      $ref: "#/AdminGroup"
+
+Permission:
+  type: string
+  enum:
+    - customers.list
+    - customers.create
+    - customers.update
+    - customers.delete
+    - users.list
+    - users.create
+    - users.update
+    - users.delete
+    - adminGroups.list
+    - adminGroups.create
+    - adminGroups.update
+    - adminGroups.delete
+    - categories.list
+    - categories.create
+    - categories.update
+    - categories.delete
+    - products.list
+    - products.create
+    - products.update
+    - products.delete
+    - orders.list
+    - orders.update
+    - orders.delete
+    - orders.view
+    - coupons.list
+    - coupons.create
+    - coupons.update
+    - coupons.delete
+    - deliveryMen.list
+    - deliveryMen.create
+    - deliveryMen.update
+    - deliveryMen.delete
+    - contactUs.list
+    - contactUs.create
+    - contactUs.update
+    - contactUs.delete
+    - faq.list
+    - faq.create
+    - faq.update
+    - faq.delete
+    - banners.list
+    - banners.create
+    - banners.update
+    - banners.delete
+    - sliders.list
+    - sliders.create
+    - sliders.update
+    - sliders.delete
+    - settings.view
+    - settings.update
+    - reports.earnings
+    - reports.orders
+    - reports.customers
+    - reports.deliveryMen
+
+ErrorResponse:
+  type: object
+  properties:
+    status:
+      type: string
+      description: "fail | error"
+      example: fail
+    message:
+      type: string
+      example: Email already in use

@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const catchAsync = require("../shared/utils/catchAsync");
 const AppError = require("../core/errors/appError");
-const userRepository = require("../modules/auth/repositories/userRepository");
+const userRepository = require("../modules/users/repositories/userRepository");
 
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
@@ -41,4 +41,3 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
-

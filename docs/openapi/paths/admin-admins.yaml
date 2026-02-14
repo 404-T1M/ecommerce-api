@@ -1,0 +1,239 @@
+adminAdmins:
+  get:
+    summary: List admins
+    description: Returns a paginated list of admins.
+    tags:
+      - Admins
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          example: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          example: 5
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/UserListResponse"
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+  post:
+    summary: Add admin
+    tags:
+      - Admins
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/index.yaml#/AddAdminRequest"
+          examples:
+            sample:
+              value:
+                name: Admin User
+                email: admin@example.com
+                mobilePhone: "+201234567890"
+                password: "P@ssw0rd!"
+                adminGroup: 65b1f0a2f7a1c2d3e4f5a999
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/UserActionResponse"
+            examples:
+              sample:
+                value:
+                  message: Admin Added Successfully
+                  user:
+                    id: 65b1f0a2f7a1c2d3e4f5a678
+                    name: Admin User
+                    email: admin@example.com
+                    mobilePhone: "+201234567890"
+                    role: admin
+                    adminGroup: 65b1f0a2f7a1c2d3e4f5a999
+                    profileImage: default-avatar_edu8jh
+                    emailVerified: true
+                    status: true
+                    createdAt: "2026-02-04T12:00:00.000Z"
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "409":
+        description: Conflict
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+adminAdminById:
+  patch:
+    summary: Update admin group for admin
+    tags:
+      - Admins
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: adminId
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/index.yaml#/UpdateAdminGroupRequest"
+          examples:
+            sample:
+              value:
+                adminGroup: 65b1f0a2f7a1c2d3e4f5a999
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/UserActionResponse"
+            examples:
+              sample:
+                value:
+                  message: Admin Updated Successfully
+                  user:
+                    id: 65b1f0a2f7a1c2d3e4f5a678
+                    name: Admin User
+                    email: admin@example.com
+                    mobilePhone: "+201234567890"
+                    role: admin
+                    adminGroup: 65b1f0a2f7a1c2d3e4f5a999
+                    profileImage: default-avatar_edu8jh
+                    emailVerified: true
+                    status: true
+                    createdAt: "2026-02-04T12:00:00.000Z"
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+  delete:
+    summary: Delete admin
+    tags:
+      - Admins
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: adminId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/MessageResponse"
+            examples:
+              sample:
+                value:
+                  message: Admin Deleted Successfully
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"

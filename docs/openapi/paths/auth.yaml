@@ -1,0 +1,416 @@
+authRegister:
+  post:
+    summary: Register a new user
+    description: Creates a new user and sends a verification code email (valid for 10 minutes).
+    tags:
+      - Auth
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/index.yaml#/RegisterRequest"
+          examples:
+            sample:
+              value:
+                name: Mohamed Elsafi
+                email: mohamed@example.com
+                mobilePhone: "+201234567890"
+                password: "P@ssw0rd!"
+    responses:
+      "201":
+        description: Created
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/RegisterSuccessResponse"
+            examples:
+              sample:
+                value:
+                  message: Your Signed Up Successfully Please Confirm Your Email
+                  data:
+                    id: 65b1f0a2f7a1c2d3e4f5a678
+                    name: Mohamed Elsafi
+                    email: mohamed@example.com
+                    mobilePhone: "+201234567890"
+                    role: user
+                    emailVerified: false
+                    status: true
+                    createdAt: "2026-02-04T12:00:00.000Z"
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              invalid_phone:
+                value:
+                  status: fail
+                  message: Invalid phone number format
+      "409":
+        description: Conflict
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              email_exists:
+                value:
+                  status: fail
+                  message: Email already in use
+              phone_exists:
+                value:
+                  status: fail
+                  message: Phone number already registered
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              server_error:
+                value:
+                  status: error
+                  message: Internal Server Error
+
+authLogin:
+  post:
+    summary: Login
+    description: Login using email or mobile phone with password.
+    tags:
+      - Auth
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/index.yaml#/LoginRequest"
+          examples:
+            login_with_email:
+              value:
+                email: mohamed@example.com
+                password: "P@ssw0rd!"
+            login_with_phone:
+              value:
+                mobilePhone: "+201234567890"
+                password: "P@ssw0rd!"
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/LoginSuccessResponse"
+            examples:
+              sample:
+                value:
+                  message: Login Successfully
+                  data:
+                    id: 65b1f0a2f7a1c2d3e4f5a678
+                    name: Mohamed Elsafi
+                    email: mohamed@example.com
+                    mobilePhone: "+201234567890"
+                    role: user
+                    emailVerified: true
+                    status: true
+                    createdAt: "2026-02-04T12:00:00.000Z"
+                    profileImage: default-avatar_edu8jh
+                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              missing_identifier:
+                value:
+                  status: fail
+                  message: Use Email Or Mobile Phone To login
+              user_not_exist:
+                value:
+                  status: fail
+                  message: User Not Exist
+              wrong_password:
+                value:
+                  status: fail
+                  message: Wrong Email Or Password
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              server_error:
+                value:
+                  status: error
+                  message: Internal Server Error
+
+authVerifyEmail:
+  post:
+    summary: Verify email
+    description: Verifies a user's email using the 6-digit code sent via email.
+    tags:
+      - Auth
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/index.yaml#/VerifyEmailRequest"
+          examples:
+            sample:
+              value:
+                email: mohamed@example.com
+                code: "123456"
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/VerifyEmailSuccessResponse"
+            examples:
+              sample:
+                value:
+                  message: Email Verified Successfully
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              already_verified:
+                value:
+                  status: fail
+                  message: Email Already verified
+              code_expired:
+                value:
+                  status: fail
+                  message: Code Expired
+              wrong_code:
+                value:
+                  status: fail
+                  message: Wrong Code!
+              account_disabled:
+                value:
+                  status: fail
+                  message: Account is disabled
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              user_not_found:
+                value:
+                  status: fail
+                  message: User not found
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              server_error:
+                value:
+                  status: error
+                  message: Internal Server Error
+
+authResendVerificationCode:
+  post:
+    summary: Resend verification code
+    description: Sends a new verification code to the user's email (valid for 10 minutes).
+    tags:
+      - Auth
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/index.yaml#/ResendVerificationCodeRequest"
+          examples:
+            sample:
+              value:
+                email: mohamed@example.com
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ResendVerificationCodeResponse"
+            examples:
+              sample:
+                value:
+                  message: Verification Code Was Send Successfully Check Your Email
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              already_verified:
+                value:
+                  status: fail
+                  message: Already Verified
+              account_disabled:
+                value:
+                  status: fail
+                  message: Account is disabled
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              user_not_found:
+                value:
+                  status: fail
+                  message: User Not Found
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              server_error:
+                value:
+                  status: error
+                  message: Internal Server Error
+
+authForgotPassword:
+  post:
+    summary: Forgot password
+    description: Sends a reset password link to the user's email (token valid for 10 minutes).
+    tags:
+      - Auth
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/index.yaml#/ForgotPasswordRequest"
+          examples:
+            sample:
+              value:
+                email: mohamed@example.com
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ForgotPasswordResponse"
+            examples:
+              sample:
+                value:
+                  message: Reset Password Link Was Send Successfully Check Your Email
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              email_not_verified:
+                value:
+                  status: fail
+                  message: Email is not verified
+              account_disabled:
+                value:
+                  status: fail
+                  message: Account is disabled
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              user_not_found:
+                value:
+                  status: fail
+                  message: User Not Found
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              server_error:
+                value:
+                  status: error
+                  message: Internal Server Error
+
+authResetPassword:
+  patch:
+    summary: Reset password
+    description: Resets the user's password using the token from the reset email.
+    tags:
+      - Auth
+    parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+        example: 9b1cfd7a2a8a4a1a9f0c1d3f5e7b9c2d1a3b4c5d6e7f8a9b0c1d2e3f4a5b
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/index.yaml#/ResetPasswordRequest"
+          examples:
+            sample:
+              value:
+                password: "NewP@ssw0rd!"
+                confirmPassword: "NewP@ssw0rd!"
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ResetPasswordResponse"
+            examples:
+              sample:
+                value:
+                  message: Password Changed Successfully
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              token_invalid:
+                value:
+                  status: fail
+                  message: Token Invalid Or Expired
+              password_mismatch:
+                value:
+                  status: fail
+                  message: Password and Confirm Password Must Be Match
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              server_error:
+                value:
+                  status: error
+                  message: Internal Server Error
