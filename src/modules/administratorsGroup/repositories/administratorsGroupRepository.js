@@ -10,8 +10,8 @@ class adminRepository {
     return await query;
   }
 
-  async save(user) {
-    return await AdminGroup.create(user);
+  async save(adminGroup) {
+    return await AdminGroup.create(adminGroup);
   }
 
   async updateOne(filter, updates) {

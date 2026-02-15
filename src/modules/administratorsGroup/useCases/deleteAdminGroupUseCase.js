@@ -12,11 +12,7 @@ class DeleteAdminGroupUseCase {
   }
 
   async execute(loggedInUser, adminGroupId) {
-    await assertAdminPermission(
-      loggedInUser,
-      this.adminGroupRepo,
-      "adminGroups.delete",
-    );
+    await assertAdminPermission(loggedInUser, "adminGroups.delete");
 
     const group = await this.adminGroupRepo.findOne({ _id: adminGroupId });
     if (!group) {

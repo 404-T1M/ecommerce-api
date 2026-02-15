@@ -1,0 +1,103 @@
+adminCreateCategory:
+  post:
+    summary: Create category
+    description: Creates a new category with an icon image.
+    tags:
+      - Categories
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "../schemas/index.yaml#/CreateCategoryRequest"
+          examples:
+            sample:
+              value:
+                nameEn: Electronics
+                nameAr: إلكترونيات
+                descriptionEn: Electronics and devices
+                descriptionAr: الإلكترونيات والأجهزة
+                order: 1
+                published: true
+                isFeatured: false
+                parent: 65b1f0a2f7a1c2d3e4f5a111
+    responses:
+      "201":
+        description: Created
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/CreateCategoryResponse"
+            examples:
+              sample:
+                value:
+                  message: Category Created Successfully
+                  category:
+                    id: 65b1f0a2f7a1c2d3e4f5a222
+                    name:
+                      en: Electronics
+                      ar: إلكترونيات
+                    slug: electronics
+                    description:
+                      en: Electronics and devices
+                      ar: الإلكترونيات والأجهزة
+                    parent: null
+                    order: 1
+                    published: true
+                    image:
+                      fileName: categories/abc123
+                      imageSize: 24567
+                      imageUrl: https://res.cloudinary.com/xxx/image/upload/...
+                    isFeatured: false
+                    createdBy: 65b1f0a2f7a1c2d3e4f5a333
+                    createdAt: "2026-02-04T12:00:00.000Z"
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              required_fields:
+                value:
+                  status: fail
+                  message: Category name (en, ar) and order are required
+              image_required:
+                value:
+                  status: fail
+                  message: Category Icon is Required
+              parent_not_found:
+                value:
+                  status: fail
+                  message: Parent category not found
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "409":
+        description: Conflict
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              slug_exists:
+                value:
+                  status: fail
+                  message: slug already exists
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"

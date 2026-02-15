@@ -1,10 +1,12 @@
 const AppError = require("../errors/appError");
+const adminGroupRepository = require("../../modules/administratorsGroup/repositories/administratorsGroupRepository");
+const adminGroupRepo = new adminGroupRepository();
 
-exports.assertAdminPermission = async (loggedInUser, repo, permission) => {
+exports.assertAdminPermission = async (loggedInUser, permission) => {
   if (!loggedInUser) {
     throw new AppError("Unauthenticated", 401);
   }
-  const adminGroupOfLoggedInAdmin = await repo.findOne({
+  const adminGroupOfLoggedInAdmin = await adminGroupRepo.findOne({
     _id: loggedInUser.adminGroup,
   });
 
