@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
-  title: E-commerce API - Auth
+  title: E-commerce API
   version: 1.0.0
-  description: API contract for authentication and admin/user management endpoints.
+  description: API contract for authentication, admin, and catalog management endpoints.
 servers:
   - url: /api/v1
     description: Base path (environment-agnostic)
@@ -40,6 +40,8 @@ paths:
     $ref: "./openapi/paths/admin-groups.yaml#/adminAdminGroups"
   /admin/admin-groups/{adminGroupId}:
     $ref: "./openapi/paths/admin-groups.yaml#/adminAdminGroupById"
+  /admin/categories/add-category:
+    $ref: "./openapi/paths/categories.yaml#/adminCreateCategory"
 
 components:
   securitySchemes:

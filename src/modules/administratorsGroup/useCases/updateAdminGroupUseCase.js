@@ -10,11 +10,7 @@ class UpdateAdminGroupUseCase {
     this.adminGroupRepo = new adminGroupRepository();
   }
   async execute(loggedInUser, body, adminGroupId) {
-    await assertAdminPermission(
-      loggedInUser,
-      this.adminGroupRepo,
-      "adminGroups.update",
-    );
+    await assertAdminPermission(loggedInUser, "adminGroups.update");
 
     const adminGroup = await this.adminGroupRepo.findOne({
       _id: adminGroupId,

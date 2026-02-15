@@ -10,11 +10,7 @@ class createAdminGroup {
     this.adminGroupRepo = new adminGroupRepository();
   }
   async execute(loggedInUser, body) {
-    await assertAdminPermission(
-      loggedInUser,
-      this.adminGroupRepo,
-      "adminGroups.create",
-    );
+    await assertAdminPermission(loggedInUser, "adminGroups.create");
     const adminGroupData = new adminGroup(body);
     const savedAdminGroup = await this.adminGroupRepo.save(adminGroupData);
     return new adminGroupResponseDTO(savedAdminGroup);

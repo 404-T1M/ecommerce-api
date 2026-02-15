@@ -471,6 +471,115 @@ AdminGroupUpdateResponse:
     adminGroups:
       $ref: "#/AdminGroup"
 
+CreateCategoryRequest:
+  type: object
+  required:
+    - nameEn
+    - nameAr
+    - descriptionEn
+    - descriptionAr
+    - order
+    - categoryImage
+  properties:
+    nameEn:
+      type: string
+      example: Electronics
+    nameAr:
+      type: string
+      example: إلكترونيات
+    descriptionEn:
+      type: string
+      example: Electronics and devices
+    descriptionAr:
+      type: string
+      example: الإلكترونيات والأجهزة
+    parent:
+      type: string
+      description: Parent category ID (optional).
+      example: 65b1f0a2f7a1c2d3e4f5a111
+    order:
+      type: integer
+      example: 1
+    published:
+      type: boolean
+      example: true
+    isFeatured:
+      type: boolean
+      example: false
+    categoryImage:
+      type: string
+      format: binary
+      description: Category icon image file.
+
+CreateCategoryResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Category Created Successfully
+    category:
+      $ref: "#/CategoryData"
+
+CategoryData:
+  type: object
+  properties:
+    id:
+      type: string
+      example: 65b1f0a2f7a1c2d3e4f5a222
+    name:
+      type: object
+      properties:
+        en:
+          type: string
+          example: Electronics
+        ar:
+          type: string
+          example: إلكترونيات
+    slug:
+      type: string
+      example: electronics
+    description:
+      type: object
+      properties:
+        en:
+          type: string
+          example: Electronics and devices
+        ar:
+          type: string
+          example: الإلكترونيات والأجهزة
+    parent:
+      type: string
+      nullable: true
+      example: 65b1f0a2f7a1c2d3e4f5a111
+    order:
+      type: integer
+      example: 1
+    published:
+      type: boolean
+      example: true
+    image:
+      type: object
+      properties:
+        fileName:
+          type: string
+          example: categories/abc123
+        imageSize:
+          type: integer
+          example: 24567
+        imageUrl:
+          type: string
+          example: https://res.cloudinary.com/xxx/image/upload/...
+    isFeatured:
+      type: boolean
+      example: false
+    createdBy:
+      type: string
+      example: 65b1f0a2f7a1c2d3e4f5a333
+    createdAt:
+      type: string
+      format: date-time
+      example: "2026-02-04T12:00:00.000Z"
+
 Permission:
   type: string
   enum:

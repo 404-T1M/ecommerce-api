@@ -9,11 +9,7 @@ class ListAdminGroupsUseCase {
     this.adminGroupRepo = new adminGroupRepository();
   }
   async execute(loggedInUser) {
-    await assertAdminPermission(
-      loggedInUser,
-      this.adminGroupRepo,
-      "adminGroups.list",
-    );
+    await assertAdminPermission(loggedInUser, "adminGroups.list");
 
     const adminGroups = await this.adminGroupRepo.find();
     return {
