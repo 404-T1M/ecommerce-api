@@ -5,7 +5,7 @@ const {
 } = require("../../../core/authorization/checkAdminAndHisPermission");
 const ImageService = require("../../../shared/services/imageUploadService");
 
-class DeleteAdminGroupUseCase {
+class DeleteCategoryUseCase {
   constructor() {
     this.categoryRepo = new CategoryRepository();
   }
@@ -32,4 +32,4 @@ class DeleteAdminGroupUseCase {
   }
 }
 
-module.exports = DeleteAdminGroupUseCase;
+module.exports = DeleteCategoryUseCase;

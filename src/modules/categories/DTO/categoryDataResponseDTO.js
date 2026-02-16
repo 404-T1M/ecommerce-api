@@ -6,7 +6,6 @@ class categoryDataResponseDTO {
     this.slug = category.slug;
     this.description = category.description;
     this.parent = category.parent;
-    this.order = category.order;
     this.published = category.published;
     this.image = category.image
       ? {

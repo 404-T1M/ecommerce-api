@@ -15,7 +15,7 @@ class CreateCategoryUseCase {
   async execute(loggedInUser, body, imageFile) {
     await assertAdminPermission(loggedInUser, "categories.create");
 
-    if (!body.nameEn || !body.nameAr || !body.order) {
+    if (!body.nameEn || !body.nameAr) {
       throw new AppError("Category name (en, ar) and order are required", 400);
     }
     if (!imageFile) {

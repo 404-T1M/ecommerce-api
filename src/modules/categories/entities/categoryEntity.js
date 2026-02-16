@@ -21,13 +21,17 @@ class Category {
     this.createdAt = data.createdAt;
   }
 
+  static slugifyName(nameEn) {
+    return slugify(nameEn, { lower: true, strict: true });
+  }
+
   static createCategory(body) {
     return new Category({
       name: {
         en: body.nameEn,
         ar: body.nameAr,
       },
-      slug: slugify(body.nameEn, { lower: true, strict: true }),
+      slug: this.slugifyName(body.nameEn),
       description: {
         en: body.descriptionEn ?? null,
         ar: body.descriptionAr ?? null,
