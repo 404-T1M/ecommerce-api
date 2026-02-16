@@ -3,12 +3,14 @@ const catchAsync = require("../../../shared/utils/catchAsync");
 const CreateCategoryUseCase = require("../useCases/createCategoryUseCase");
 const ListAllCategoriesUseCase = require("../useCases/listAllCategoriesUseCase");
 const DeleteCategoryUseCase = require("../useCases/deleteCategoryUseCase");
+const UpdateCategoryUseCase = require("../useCases/updateCategoryUseCase");
 
 class CategoryController {
   constructor() {
     this.createCategoryUseCase = new CreateCategoryUseCase();
     this.listAllCategoriesUseCase = new ListAllCategoriesUseCase();
     this.deleteCategoryUseCase = new DeleteCategoryUseCase();
+    this.updateCategoryUseCase = new UpdateCategoryUseCase();
   }
 
   createCategory = catchAsync(async (req, res, next) => {
@@ -72,6 +74,24 @@ class CategoryController {
     await this.deleteCategoryUseCase.execute(loggedInUser, categoryId);
     res.status(203).json({
       message: "Category Deleted Successfully",
+    });
+  });
+
+  updateCategory = catchAsync(async (req, res, next) => {
+    const loggedInUser = req.user;
+    const { categoryId } = req.params;
+    const body = req.body;
+    const imageFile = req.file;
+
+    const category = await this.updateCategoryUseCase.execute(
+      loggedInUser,
+      categoryId,
+      body,
+      imageFile,
+    );
+    res.status(201).json({
+      message: "Category Updated Successfully",
+      category,
     });
   });
 }

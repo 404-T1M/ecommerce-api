@@ -289,3 +289,113 @@ adminDeleteCategory:
           application/json:
             schema:
               $ref: "../schemas/index.yaml#/ErrorResponse"
+adminUpdateCategory:
+  patch:
+    summary: Update category
+    description: Updates category fields and optionally replaces the icon image.
+    tags:
+      - Categories
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: categoryId
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "../schemas/index.yaml#/UpdateCategoryRequest"
+          examples:
+            sample:
+              value:
+                nameEn: Electronics
+                nameAr: إلكترونيات
+                descriptionEn: Updated description
+                descriptionAr: وصف محدث
+                parent: 65b1f0a2f7a1c2d3e4f5a111
+                isFeatured: true
+    responses:
+      "201":
+        description: Created
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/UpdateCategoryResponse"
+            examples:
+              sample:
+                value:
+                  message: Category Updated Successfully
+                  category:
+                    id: 65b1f0a2f7a1c2d3e4f5a222
+                    name:
+                      en: Electronics
+                      ar: إلكترونيات
+                    slug: electronics
+                    description:
+                      en: Updated description
+                      ar: وصف محدث
+                    parent: null
+                    order: 1
+                    published: true
+                    image:
+                      fileName: categories/abc123
+                      imageSize: 24567
+                      imageUrl: https://res.cloudinary.com/xxx/image/upload/...
+                    isFeatured: true
+                    createdBy: 65b1f0a2f7a1c2d3e4f5a333
+                    createdAt: "2026-02-04T12:00:00.000Z"
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              invalid_parent:
+                value:
+                  status: fail
+                  message: Invalid parent category
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              not_found:
+                value:
+                  status: fail
+                  message: Category not found
+      "409":
+        description: Conflict
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              slug_exists:
+                value:
+                  status: fail
+                  message: slug already exists
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"

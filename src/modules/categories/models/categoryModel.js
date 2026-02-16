@@ -36,11 +36,6 @@ const categorySchema = mongoose.Schema(
       ref: "Category",
     },
 
-    order: {
-      type: Number,
-      required: true,
-    },
-
     published: {
       type: Boolean,
       default: false,
@@ -58,6 +53,11 @@ const categorySchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
 
     isFeatured: {

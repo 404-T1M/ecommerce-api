@@ -38,13 +38,14 @@ router.delete(
   },
 );
 
-module.exports = router;
+router.patch(
+  "/admin/categories/:categoryId/update",
+  protect,
+  restrictTo("admin"),
+  uploadSingle("categoryImage"),
+  (req, res, next) => {
+    controller.updateCategory(req, res, next);
+  },
+);
 
-// router.patch(
-//   "/admin/admins/:adminId",
-//   protect,
-//   restrictTo("admin"),
-//   (req, res, next) => {
-//     controller.updateAdmin(req, res, next);
-//   },
-// );
+module.exports = router;

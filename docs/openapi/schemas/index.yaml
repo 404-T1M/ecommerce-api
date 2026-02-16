@@ -543,6 +543,42 @@ CreateCategoryResponse:
     category:
       $ref: "#/CategoryData"
 
+UpdateCategoryRequest:
+  type: object
+  properties:
+    nameEn:
+      type: string
+      example: Electronics
+    nameAr:
+      type: string
+      example: إلكترونيات
+    descriptionEn:
+      type: string
+      example: Updated description
+    descriptionAr:
+      type: string
+      example: وصف محدث
+    parent:
+      type: string
+      description: Parent category ID (optional).
+      example: 65b1f0a2f7a1c2d3e4f5a111
+    isFeatured:
+      type: boolean
+      example: true
+    categoryImage:
+      type: string
+      format: binary
+      description: Category icon image file (optional).
+
+UpdateCategoryResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Category Updated Successfully
+    category:
+      $ref: "#/CategoryData"
+
 CategoryData:
   type: object
   properties:
