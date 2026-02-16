@@ -48,4 +48,22 @@ router.patch(
   },
 );
 
+router.patch(
+  "/admin/categories/:categoryId/unpublish",
+  protect,
+  restrictTo("admin"),
+  (req, res, next) => {
+    controller.unPublishCategory(req, res, next);
+  },
+);
+
+router.patch(
+  "/admin/categories/:categoryId/publish",
+  protect,
+  restrictTo("admin"),
+  (req, res, next) => {
+    controller.publishCategory(req, res, next);
+  },
+);
+
 module.exports = router;

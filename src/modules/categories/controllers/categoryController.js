@@ -3,14 +3,16 @@ const catchAsync = require("../../../shared/utils/catchAsync");
 const CreateCategoryUseCase = require("../useCases/createCategoryUseCase");
 const ListAllCategoriesUseCase = require("../useCases/listAllCategoriesUseCase");
 const DeleteCategoryUseCase = require("../useCases/deleteCategoryUseCase");
-const UpdateCategoryUseCase = require("../useCases/updateCategoryUseCase");
+const UnpublishCategoryUseCase = require("../useCases/unpublishCategoryUseCase");
+const PublishCategoryUseCase = require("../useCases/publishCategoryUseCase");
 
 class CategoryController {
   constructor() {
     this.createCategoryUseCase = new CreateCategoryUseCase();
     this.listAllCategoriesUseCase = new ListAllCategoriesUseCase();
     this.deleteCategoryUseCase = new DeleteCategoryUseCase();
-    this.updateCategoryUseCase = new UpdateCategoryUseCase();
+    this.unpublishCategoryUseCase = new UnpublishCategoryUseCase();
+    this.publishCategoryUseCase = new PublishCategoryUseCase();
   }
 
   createCategory = catchAsync(async (req, res, next) => {
@@ -92,6 +94,26 @@ class CategoryController {
     res.status(201).json({
       message: "Category Updated Successfully",
       category,
+    });
+  });
+
+  unPublishCategory = catchAsync(async (req, res, next) => {
+    const loggedInUser = req.user;
+    const { categoryId } = req.params;
+
+    await this.unpublishCategoryUseCase.execute(loggedInUser, categoryId);
+    res.status(201).json({
+      message: `Category Unpublished Successfully`,
+    });
+  });
+
+  publishCategory = catchAsync(async (req, res, next) => {
+    const loggedInUser = req.user;
+    const { categoryId } = req.params;
+
+    await this.publishCategoryUseCase.execute(loggedInUser, categoryId);
+    res.status(201).json({
+      message: `Category Published Successfully`,
     });
   });
 }

@@ -1,6 +1,19 @@
 const Category = require("../models/categoryModel");
 
 class categoryRepository {
+  async findChildrenIds(parentId) {
+    const children = await Category.find({ parent: parentId }, { _id: 1 });
+
+    let ids = children.map((c) => c._id);
+
+    for (const child of children) {
+      const subChildrenIds = await this.findChildrenIds(child._id);
+      ids = ids.concat(subChildrenIds);
+    }
+
+    return ids;
+  }
+
   buildQuery(filters) {
     const query = {};
 
@@ -66,6 +79,13 @@ class categoryRepository {
 
   async updateOne(filter, updates) {
     return await Category.findOneAndUpdate(filter, updates, {
+      new: true,
+      runValidators: true,
+    });
+  }
+
+  async updateMany(filter, update) {
+    return Category.updateMany(filter, update, {
       new: true,
       runValidators: true,
     });

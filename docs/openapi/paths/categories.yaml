@@ -399,3 +399,112 @@ adminUpdateCategory:
           application/json:
             schema:
               $ref: "../schemas/index.yaml#/ErrorResponse"
+adminPublishCategory:
+  patch:
+    summary: Publish category
+    description: Marks a category as published.
+    tags:
+      - Categories
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: categoryId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      "201":
+        description: Created
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/MessageResponse"
+            examples:
+              sample:
+                value:
+                  message: Category Published Successfully
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              not_found:
+                value:
+                  status: fail
+                  message: Category Not Found
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+adminUnpublishCategory:
+  patch:
+    summary: Unpublish category
+    description: Marks a category (and its children) as unpublished.
+    tags:
+      - Categories
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: categoryId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      "201":
+        description: Created
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/MessageResponse"
+            examples:
+              sample:
+                value:
+                  message: Category Unpublished Successfully
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              not_found:
+                value:
+                  status: fail
+                  message: Category Not Found
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"

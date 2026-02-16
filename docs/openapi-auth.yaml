@@ -50,6 +50,10 @@ paths:
     $ref: "./openapi/paths/categories.yaml#/adminDeleteCategory"
   /admin/categories/{categoryId}/update:
     $ref: "./openapi/paths/categories.yaml#/adminUpdateCategory"
+  /admin/categories/{categoryId}/publish:
+    $ref: "./openapi/paths/categories.yaml#/adminPublishCategory"
+  /admin/categories/{categoryId}/unpublish:
+    $ref: "./openapi/paths/categories.yaml#/adminUnpublishCategory"
 
 components:
   securitySchemes:
