@@ -213,3 +213,79 @@ publicListCategories:
           application/json:
             schema:
               $ref: "../schemas/index.yaml#/ErrorResponse"
+adminDeleteCategory:
+  delete:
+    summary: Delete category
+    description: Deletes a category if it has no subcategories.
+    tags:
+      - Categories
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: categoryId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      "203":
+        description: Non-Authoritative Information
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/MessageResponse"
+            examples:
+              sample:
+                value:
+                  message: Category Deleted Successfully
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              bad_request:
+                value:
+                  status: fail
+                  message: Category not found
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              not_found:
+                value:
+                  status: fail
+                  message: Category not found
+      "409":
+        description: Conflict
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              has_children:
+                value:
+                  status: fail
+                  message: Cannot delete category with subcategories
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
