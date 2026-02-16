@@ -1,5 +1,5 @@
 const AppError = require("../../../core/errors/appError");
-const category = require("../entities/categoryEntity");
+const Category = require("../entities/categoryEntity");
 const CategoryRepository = require("../repositories/categoryRepository");
 const CategoryDataResponseDTO = require("../DTO/categoryDataResponseDTO");
 const ImageService = require("../../../shared/services/imageUploadService");
@@ -35,7 +35,7 @@ class CreateCategoryUseCase {
         folder: "categories",
       });
 
-      const data = category.createCategory({
+      const data = Category.createCategory({
         ...body,
         image: {
           fileName: imageData.publicId,

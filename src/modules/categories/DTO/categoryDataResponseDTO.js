@@ -8,15 +8,17 @@ class categoryDataResponseDTO {
     this.parent = category.parent;
     this.order = category.order;
     this.published = category.published;
-    this.image = {
-      fileName: category.image.fileName,
-      imageSize: category.image.size,
-      imageUrl: buildImageUrl(category.image.fileName, {
-        crop: "fill",
-        quality: "auto",
-        fetch_format: "auto",
-      }),
-    };
+    this.image = category.image
+      ? {
+          fileName: category.image.fileName,
+          imageSize: category.image.size,
+          imageUrl: buildImageUrl(category.image.fileName, {
+            crop: "fill",
+            quality: "auto",
+            fetch_format: "auto",
+          }),
+        }
+      : null;
     this.isFeatured = category.isFeatured;
     this.createdBy = category.createdBy;
     this.createdAt = category.createdAt;

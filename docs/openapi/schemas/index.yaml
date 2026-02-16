@@ -350,6 +350,9 @@ MetaPagination:
     limit:
       type: integer
       example: 10
+    totalPages:
+      type: integer
+      example: 5
 
 MetaTotal:
   type: object
@@ -470,6 +473,26 @@ AdminGroupUpdateResponse:
       example: Admin Group Updating Successfully
     adminGroups:
       $ref: "#/AdminGroup"
+
+AdminCategoriesListResponse:
+  type: object
+  properties:
+    Categories:
+      type: array
+      items:
+        $ref: "#/CategoryData"
+    meta:
+      $ref: "#/MetaPagination"
+
+CategoriesListResponse:
+  type: object
+  properties:
+    categories:
+      type: array
+      items:
+        $ref: "#/CategoryData"
+    meta:
+      $ref: "#/MetaPagination"
 
 CreateCategoryRequest:
   type: object

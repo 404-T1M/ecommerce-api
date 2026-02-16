@@ -16,11 +16,20 @@ router.post(
   },
 );
 
-module.exports = router;
+router.get(
+  "/admin/categories",
+  protect,
+  restrictTo("admin"),
+  (req, res, next) => {
+    controller.adminListAllCategories(req, res, next);
+  },
+);
 
-// router.get("/admin/admins", protect, restrictTo("admin"), (req, res, next) => {
-//   controller.listAllAdmins(req, res, next);
-// });
+router.get("/categories", (req, res, next) => {
+  controller.usersListAllCategories(req, res, next);
+});
+
+module.exports = router;
 
 // router.patch(
 //   "/admin/admins/:adminId",
