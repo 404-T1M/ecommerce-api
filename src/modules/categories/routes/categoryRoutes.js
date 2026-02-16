@@ -29,6 +29,10 @@ router.get("/categories", (req, res, next) => {
   controller.usersListAllCategories(req, res, next);
 });
 
+router.get("/categories/:categoryId", (req, res, next) => {
+  controller.getCategory(req, res, next);
+});
+
 router.delete(
   "/admin/categories/:categoryId/delete",
   protect,
