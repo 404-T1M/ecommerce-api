@@ -101,3 +101,115 @@ adminCreateCategory:
           application/json:
             schema:
               $ref: "../schemas/index.yaml#/ErrorResponse"
+
+adminListCategories:
+  get:
+    summary: List categories (admin)
+    description: Returns a paginated list of categories (admin view).
+    tags:
+      - Categories
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: name
+        in: query
+        schema:
+          type: string
+        description: Filter by name (en/ar, partial match).
+      - name: published
+        in: query
+        schema:
+          type: boolean
+        description: Filter by published status.
+      - name: parent
+        in: query
+        schema:
+          type: string
+        description: Filter by parent category ID.
+      - name: fromDate
+        in: query
+        schema:
+          type: string
+          format: date-time
+        description: Filter by createdAt >= fromDate.
+      - name: toDate
+        in: query
+        schema:
+          type: string
+          format: date-time
+        description: Filter by createdAt <= toDate.
+      - name: page
+        in: query
+        schema:
+          type: integer
+          example: 1
+        description: Page number.
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          example: 10
+        description: Page size.
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/AdminCategoriesListResponse"
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+publicListCategories:
+  get:
+    summary: List categories (public)
+    description: Returns a paginated list of published categories.
+    tags:
+      - Categories
+    parameters:
+      - name: name
+        in: query
+        schema:
+          type: string
+        description: Filter by name (en/ar, partial match).
+      - name: page
+        in: query
+        schema:
+          type: integer
+          example: 1
+        description: Page number.
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          example: 10
+        description: Page size.
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/CategoriesListResponse"
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"

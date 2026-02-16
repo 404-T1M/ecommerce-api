@@ -8,7 +8,7 @@ class userRepository {
       query.role = filters.role;
     }
 
-    if (filters.status) {
+    if (filters.status !== undefined) {
       query.status = filters.status;
     }
 
