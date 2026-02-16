@@ -29,6 +29,15 @@ router.get("/categories", (req, res, next) => {
   controller.usersListAllCategories(req, res, next);
 });
 
+router.delete(
+  "/admin/categories/:categoryId/delete",
+  protect,
+  restrictTo("admin"),
+  (req, res, next) => {
+    controller.deleteCategory(req, res, next);
+  },
+);
+
 module.exports = router;
 
 // router.patch(
@@ -37,14 +46,5 @@ module.exports = router;
 //   restrictTo("admin"),
 //   (req, res, next) => {
 //     controller.updateAdmin(req, res, next);
-//   },
-// );
-
-// router.delete(
-//   "/admin/admins/:adminId",
-//   protect,
-//   restrictTo("admin"),
-//   (req, res, next) => {
-//     controller.deleteAdmin(req, res, next);
 //   },
 // );

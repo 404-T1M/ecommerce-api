@@ -46,6 +46,8 @@ paths:
     $ref: "./openapi/paths/categories.yaml#/adminListCategories"
   /categories:
     $ref: "./openapi/paths/categories.yaml#/publicListCategories"
+  /admin/categories/{categoryId}/delete:
+    $ref: "./openapi/paths/categories.yaml#/adminDeleteCategory"
 
 components:
   securitySchemes:

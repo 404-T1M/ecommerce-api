@@ -2,11 +2,13 @@ const { GetCategories } = require("@getbrevo/brevo");
 const catchAsync = require("../../../shared/utils/catchAsync");
 const CreateCategoryUseCase = require("../useCases/createCategoryUseCase");
 const ListAllCategoriesUseCase = require("../useCases/listAllCategoriesUseCase");
+const DeleteCategoryUseCase = require("../useCases/deleteCategoryUseCase");
 
 class CategoryController {
   constructor() {
     this.createCategoryUseCase = new CreateCategoryUseCase();
     this.listAllCategoriesUseCase = new ListAllCategoriesUseCase();
+    this.deleteCategoryUseCase = new DeleteCategoryUseCase();
   }
 
   createCategory = catchAsync(async (req, res, next) => {
@@ -61,6 +63,15 @@ class CategoryController {
     res.status(200).json({
       categories: result.data,
       meta: result.meta,
+    });
+  });
+
+  deleteCategory = catchAsync(async (req, res, next) => {
+    const loggedInUser = req.user;
+    const { categoryId } = req.params;
+    await this.deleteCategoryUseCase.execute(loggedInUser, categoryId);
+    res.status(203).json({
+      message: "Category Deleted Successfully",
     });
   });
 }
