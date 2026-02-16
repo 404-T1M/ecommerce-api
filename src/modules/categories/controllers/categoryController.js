@@ -3,6 +3,7 @@ const catchAsync = require("../../../shared/utils/catchAsync");
 const CreateCategoryUseCase = require("../useCases/createCategoryUseCase");
 const ListAllCategoriesUseCase = require("../useCases/listAllCategoriesUseCase");
 const DeleteCategoryUseCase = require("../useCases/deleteCategoryUseCase");
+const GetCategoryUseCase = require("../useCases/getCategoryUseCase");
 const UnpublishCategoryUseCase = require("../useCases/unpublishCategoryUseCase");
 const PublishCategoryUseCase = require("../useCases/publishCategoryUseCase");
 
@@ -11,6 +12,7 @@ class CategoryController {
     this.createCategoryUseCase = new CreateCategoryUseCase();
     this.listAllCategoriesUseCase = new ListAllCategoriesUseCase();
     this.deleteCategoryUseCase = new DeleteCategoryUseCase();
+    this.getCategoryUseCase = new GetCategoryUseCase();
     this.unpublishCategoryUseCase = new UnpublishCategoryUseCase();
     this.publishCategoryUseCase = new PublishCategoryUseCase();
   }
@@ -67,6 +69,15 @@ class CategoryController {
     res.status(200).json({
       categories: result.data,
       meta: result.meta,
+    });
+  });
+
+  getCategory = catchAsync(async (req, res, next) => {
+    const { categoryId } = req.params;
+    const category = await this.getCategoryUseCase.execute(categoryId);
+    res.status(200).json({
+      message: "Success",
+      category,
     });
   });
 
