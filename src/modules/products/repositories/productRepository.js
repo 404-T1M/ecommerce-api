@@ -113,7 +113,7 @@ class ProductRepository {
     });
   }
 
-  async findWithVariants(productMatch, pagination, sort) {
+  async findWithVariants(productMatch, variantMatch, pagination, sort) {
     const { page, limit } = pagination;
     const skip = (page - 1) * limit;
 
@@ -122,10 +122,19 @@ class ProductRepository {
       {
         $lookup: {
           from: "productvariants",
-          localField: "_id",
-          foreignField: "product",
+          let: { productId: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$product", "$$productId"] } } },
+            { $match: variantMatch },
+            { $sort: { "price.finalPrice": 1 } }
+          ],
           as: "variants",
         },
+      },
+      {
+        $match: {
+          variants: { $ne: [] }
+        }
       },
       {
         $addFields: {

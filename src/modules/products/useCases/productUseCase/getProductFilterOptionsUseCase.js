@@ -1,4 +1,6 @@
+const mongoose = require("mongoose");
 const ProductVariantRepository = require("../../repositories/productVariantRepository");
+const CategoryRepository = require("../../../categories/repositories/categoryRepository");
 const {
   assertAdminPermission,
 } = require("../../../../core/authorization/checkAdminAndHisPermission");
@@ -6,12 +8,29 @@ const {
 class GetProductFilterOptionsUseCase {
   constructor() {
     this.variantRepo = new ProductVariantRepository();
+    this.categoryRepo = new CategoryRepository();
   }
 
   async execute(loggedInUser, filter = {}) {
     if (loggedInUser?.role === "admin") {
       await assertAdminPermission(loggedInUser, "products.list");
     }
+
+    const categoryMatch = {};
+    if (!loggedInUser || loggedInUser.role !== "admin") {
+      categoryMatch.published = true;
+      categoryMatch.isDeleted = false;
+    } else {
+      if (filter.published !== undefined) categoryMatch.published = filter.published;
+      if (filter.isDeleted !== undefined) categoryMatch.isDeleted = filter.isDeleted;
+    }
+
+    const categoriesQuery = await this.categoryRepo.find(categoryMatch);
+    const categoriesList = categoriesQuery.map(c => ({
+      _id: c._id,
+      name: c.name,
+      slug: c.slug
+    }));
 
     const variantMatch = {};
 
@@ -28,7 +47,19 @@ class GetProductFilterOptionsUseCase {
     const productMatch = {};
 
     if (filter.category) {
-      productMatch["product.category"] = filter.category;
+      let categoryArr;
+      if (typeof filter.category === "string") {
+        categoryArr = filter.category.split(",");
+      } else if (Array.isArray(filter.category)) {
+        categoryArr = filter.category;
+      }
+
+      if (categoryArr && categoryArr.length > 0) {
+        const categoryIds = categoryArr.map(cat => {
+          return mongoose.Types.ObjectId.isValid(cat) ? new mongoose.Types.ObjectId(cat) : cat;
+        });
+        productMatch["product.category"] = { $in: categoryIds };
+      }
     }
 
     if (!loggedInUser || loggedInUser.role !== "admin") {
@@ -41,11 +72,15 @@ class GetProductFilterOptionsUseCase {
         productMatch["product.isDeleted"] = filter.productIsDeleted;
     }
 
-    const { attributes, priceRange } =
+    let { attributes, priceRange } =
       await this.variantRepo.getAvailableFilterOptions(
         variantMatch,
         productMatch,
       );
+
+    if (!filter.category) {
+      attributes = [];
+    }
 
     const sortOptions = [
       { key: "newest", label: { en: "Newest", ar: "الأحدث" } },
@@ -61,6 +96,7 @@ class GetProductFilterOptionsUseCase {
     ];
 
     return {
+      categories: categoriesList,
       attributes,
       priceRange,
       sortOptions,

@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const ProductRepository = require("../../repositories/productRepository");
 const productResponseDTO = require("../../DTO/productResponseDTO");
 const {
@@ -17,7 +18,19 @@ class ListAllProductsUseCase {
     const query = {};
 
     if (filter.category) {
-      query.category = filter.category;
+      let categoryArr;
+      if (typeof filter.category === "string") {
+        categoryArr = filter.category.split(",");
+      } else if (Array.isArray(filter.category)) {
+        categoryArr = filter.category;
+      }
+
+      if (categoryArr && categoryArr.length > 0) {
+        const categoryIds = categoryArr.map(cat => {
+          return mongoose.Types.ObjectId.isValid(cat) ? new mongoose.Types.ObjectId(cat) : cat;
+        });
+        query.category = { $in: categoryIds };
+      }
     }
 
     // Role-based filtering for published & isDeleted
@@ -55,8 +68,41 @@ class ListAllProductsUseCase {
       limit: Number(filter.limit) || 20,
     };
 
+    const variantMatch = {};
+    if (!loggedInUser || loggedInUser.role !== "admin") {
+      variantMatch.published = true;
+      variantMatch.isDeleted = false;
+    } else {
+      if (filter.published !== undefined && filter.published !== "") {
+        variantMatch.published = filter.published === "true" || filter.published === true;
+      }
+      if (filter.isDeleted !== undefined && filter.isDeleted !== "") {
+        variantMatch.isDeleted = filter.isDeleted === "true" || filter.isDeleted === true;
+      }
+    }
+
+    if (filter.priceMin || filter.priceMax) {
+      variantMatch["price.finalPrice"] = {};
+      if (filter.priceMin) variantMatch["price.finalPrice"].$gte = Number(filter.priceMin);
+      if (filter.priceMax) variantMatch["price.finalPrice"].$lte = Number(filter.priceMax);
+    }
+
+    if (filter.attributes) {
+      let attributesArr;
+      if (typeof filter.attributes === "string") {
+        attributesArr = filter.attributes.split(",");
+      } else if (Array.isArray(filter.attributes)) {
+        attributesArr = filter.attributes;
+      }
+
+      if (attributesArr && attributesArr.length > 0) {
+        variantMatch["attributes.value"] = { $in: attributesArr };
+      }
+    }
+
     const { data, total } = await this.productRepo.findWithVariants(
       query,
+      variantMatch,
       pagination,
       sort,
     );

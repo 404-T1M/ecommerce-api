@@ -205,17 +205,17 @@ class ProductVariantRepository {
             {
               $group: {
                 _id: {
-                  attributeId: "$attributes.attribute",
                   nameEn: "$attributes.nameSnapshot.en",
                   nameAr: "$attributes.nameSnapshot.ar",
                 },
                 values: { $addToSet: "$attributes.value" },
+                attributeId: { $first: "$attributes.attribute" }
               },
             },
             {
               $project: {
                 _id: 0,
-                attributeId: "$_id.attributeId",
+                attributeId: 1,
                 name: {
                   en: "$_id.nameEn",
                   ar: "$_id.nameAr",

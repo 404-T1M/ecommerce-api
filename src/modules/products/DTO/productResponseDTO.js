@@ -16,12 +16,33 @@ class ProductResponseDTO {
 
     this.category = product.category;
     this.attributes = product.attributes;
-    this.price = product.price;
+    this.price = product.minPrice !== undefined ? product.minPrice : (product.price ? product.price.finalPrice : null);
     this.discountPrice = product.discountPrice;
     this.published = product.published;
     this.sku = product.sku;
     this.stock = product.stock;
-    this.createdBy = product.createdBy;
+    if (product.createdBy && product.createdBy.name) {
+      this.createdBy = {
+        _id: product.createdBy._id,
+        name: product.createdBy.name,
+        email: product.createdBy.email
+      };
+    } else if (product.createdBy) {
+      this.createdBy = product.createdBy;
+    } else {
+      this.createdBy = null;
+    }
+
+    this.startingPrice = product.minPrice;
+    if (product.variants && product.variants.length > 0) {
+      const cheapest = product.variants[0];
+      this.cheapestVariant = {
+        _id: cheapest._id,
+        price: cheapest.price,
+        image: cheapest.image,
+        attributes: cheapest.attributes
+      };
+    }
     this.createdAt = product.createdAt;
   }
 }
