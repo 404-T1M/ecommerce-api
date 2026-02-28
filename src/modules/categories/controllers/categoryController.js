@@ -1,20 +1,23 @@
-const { GetCategories } = require("@getbrevo/brevo");
 const catchAsync = require("../../../shared/utils/catchAsync");
 const CreateCategoryUseCase = require("../useCases/createCategoryUseCase");
 const ListAllCategoriesUseCase = require("../useCases/listAllCategoriesUseCase");
+const UpdateCategoryUseCase = require("../useCases/updateCategoryUseCase");
 const DeleteCategoryUseCase = require("../useCases/deleteCategoryUseCase");
 const GetCategoryUseCase = require("../useCases/getCategoryUseCase");
 const UnpublishCategoryUseCase = require("../useCases/unpublishCategoryUseCase");
 const PublishCategoryUseCase = require("../useCases/publishCategoryUseCase");
+const RestoreDeletedCategoryUseCase = require("../useCases/restoreDeletedCategory");
 
 class CategoryController {
   constructor() {
     this.createCategoryUseCase = new CreateCategoryUseCase();
     this.listAllCategoriesUseCase = new ListAllCategoriesUseCase();
     this.deleteCategoryUseCase = new DeleteCategoryUseCase();
+    this.updateCategoryUseCase = new UpdateCategoryUseCase();
     this.getCategoryUseCase = new GetCategoryUseCase();
     this.unpublishCategoryUseCase = new UnpublishCategoryUseCase();
     this.publishCategoryUseCase = new PublishCategoryUseCase();
+    this.restoreDeletedCategoryUseCase = new RestoreDeletedCategoryUseCase();
   }
 
   createCategory = catchAsync(async (req, res, next) => {
@@ -38,6 +41,7 @@ class CategoryController {
     const filter = {
       name: req.query.name,
       published: req.query.published,
+      isDeleted: req.query.isDeleted,
       parent: req.query.parent,
       fromDate: req.query.fromDate,
       toDate: req.query.toDate,
@@ -59,6 +63,7 @@ class CategoryController {
     const filter = {
       name: req.query.name,
       published: true,
+      isDeleted: false,
       page: Number(req.query.page) || 1,
       limit: Number(req.query.limit) || 10,
     };
@@ -125,6 +130,16 @@ class CategoryController {
     await this.publishCategoryUseCase.execute(loggedInUser, categoryId);
     res.status(201).json({
       message: `Category Published Successfully`,
+    });
+  });
+
+  restoreDeletedCategory = catchAsync(async (req, res, next) => {
+    const loggedInUser = req.user;
+    const { categoryId } = req.params;
+
+    await this.restoreDeletedCategoryUseCase.execute(loggedInUser, categoryId);
+    res.status(201).json({
+      message: `Category Restored Successfully`,
     });
   });
 }

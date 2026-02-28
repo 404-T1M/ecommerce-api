@@ -33,8 +33,11 @@ const userSchema = new mongoose.Schema(
     },
 
     profileImage: {
-      type: String,
-      default: "default-avatar_edu8jh",
+      fileName: {
+        type: String,
+        default: "default-avatar_edu8jh",
+      },
+      size: Number,
     },
 
     role: {

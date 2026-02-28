@@ -70,4 +70,13 @@ router.patch(
   },
 );
 
+router.patch(
+  "/admin/categories/:categoryId/restore",
+  protect,
+  restrictTo("admin"),
+  (req, res, next) => {
+    controller.restoreDeletedCategory(req, res, next);
+  },
+);
+
 module.exports = router;

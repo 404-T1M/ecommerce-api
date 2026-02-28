@@ -9,18 +9,22 @@ class categoryDataResponseDTO {
     this.published = category.published;
     this.image = category.image
       ? {
-          fileName: category.image.fileName,
-          imageSize: category.image.size,
-          imageUrl: buildImageUrl(category.image.fileName, {
-            crop: "fill",
-            quality: "auto",
-            fetch_format: "auto",
-          }),
-        }
+        fileName: category.image.fileName,
+        imageSize: category.image.size,
+        imageUrl: buildImageUrl(category.image.fileName, {
+          crop: "fill",
+          quality: "auto",
+          fetch_format: "auto",
+        }),
+      }
       : null;
     this.isFeatured = category.isFeatured;
     this.createdBy = category.createdBy;
     this.createdAt = category.createdAt;
+    this.attributes = (category.attributes || []).map((a) => ({
+      attribute: a.attribute,
+      required: a.required,
+    }));
   }
 }
 

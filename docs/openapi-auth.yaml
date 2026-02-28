@@ -54,6 +54,30 @@ paths:
     $ref: "./openapi/paths/categories.yaml#/adminPublishCategory"
   /admin/categories/{categoryId}/unpublish:
     $ref: "./openapi/paths/categories.yaml#/adminUnpublishCategory"
+  /admin/products/add-product:
+    $ref: "./openapi/paths/products.yaml#/adminCreateProduct"
+  /products/search:
+    $ref: "./openapi/paths/products.yaml#/searchProducts"
+  /admin/products:
+    $ref: "./openapi/paths/products.yaml#/adminListProducts"
+  /products:
+    $ref: "./openapi/paths/products.yaml#/publicListProducts"
+  /products/{productId}:
+    $ref: "./openapi/paths/products.yaml#/publicGetProduct"
+  /admin/products/{productId}:
+    $ref: "./openapi/paths/products.yaml#/adminGetProduct"
+  /admin/products/{productId}/delete:
+    $ref: "./openapi/paths/products.yaml#/adminDeleteProduct"
+  /admin/products/{productId}/update:
+    $ref: "./openapi/paths/products.yaml#/adminUpdateProduct"
+  /admin/products/{productId}/publish-status:
+    $ref: "./openapi/paths/products.yaml#/adminTogglePublishProduct"
+  /admin/attributes/add-attribute:
+    $ref: "./openapi/paths/attributes.yaml#/adminCreateAttribute"
+  /admin/attributes:
+    $ref: "./openapi/paths/attributes.yaml#/adminListAttributes"
+  /admin/attributes/{attributeId}/delete:
+    $ref: "./openapi/paths/attributes.yaml#/adminDeleteAttribute"
 
 components:
   securitySchemes:

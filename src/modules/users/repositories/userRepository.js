@@ -1,14 +1,14 @@
 const User = require("../models/userModel");
 
 class userRepository {
-  async find(filters) {
+  _buildQuery(filters) {
     const query = {};
 
     if (filters.role) {
       query.role = filters.role;
     }
 
-    if (filters.status !== undefined) {
+    if (filters.status !== undefined && filters.status !== "") {
       query.status = filters.status;
     }
 
@@ -16,8 +16,12 @@ class userRepository {
       query.name = { $regex: filters.name, $options: "i" };
     }
 
-    if (filters.emailVerified) {
+    if (filters.emailVerified !== undefined && filters.emailVerified !== "") {
       query.emailVerified = filters.emailVerified;
+    }
+
+    if (filters.isDeleted !== undefined) {
+      query.isDeleted = filters.isDeleted;
     }
 
     if (filters.fromDate || filters.toDate) {
@@ -29,10 +33,23 @@ class userRepository {
         query.createdAt.$lte = new Date(filters.toDate);
       }
     }
+    return query;
+  }
 
-    return User.find(query)
-      .skip((filters.page - 1) * filters.limit)
-      .limit(filters.limit);
+  async find(filters) {
+    const query = this._buildQuery(filters);
+    const users = User.find(query);
+
+    if (filters.sort) {
+      users.sort(filters.sort);
+    } else {
+      users.sort({ createdAt: -1 });
+    }
+
+    if (filters.page && filters.limit) {
+      users.skip((filters.page - 1) * filters.limit).limit(filters.limit);
+    }
+    return await users;
   }
   async findOne(filter, options = {}) {
     let query = User.findOne(filter);
@@ -72,7 +89,8 @@ class userRepository {
   }
 
   async count(filter) {
-    return User.countDocuments(filter);
+    const query = this._buildQuery(filter);
+    return User.countDocuments(query);
   }
 
   async deleteOne(filter) {

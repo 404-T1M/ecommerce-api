@@ -13,7 +13,6 @@ class deleteAdminUseCase {
   async execute(loggedInUser, adminId) {
     await assertAdminPermission(
       loggedInUser,
-      this.adminGroupRepo,
       "users.delete",
     );
 

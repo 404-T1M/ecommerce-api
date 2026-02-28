@@ -1,0 +1,625 @@
+adminCreateProduct:
+  post:
+    summary: Create product
+    description: Creates a new product with images.
+    tags:
+      - Products
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "../schemas/index.yaml#/CreateProductRequest"
+          examples:
+            sample:
+              value:
+                nameEn: iPhone 15
+                nameAr: ايفون 15
+                descriptionEn: Latest iPhone
+                descriptionAr: أحدث آيفون
+                category: 65b1f0a2f7a1c2d3e4f5a111
+                originalPrice: 1200
+                salePrice: 1100
+                discountType: percentage
+                discountValue: 10
+                stock: 50
+                attributes:
+                  - attributeId: 65b1f0a2f7a1c2d3e4f5a555
+                    value: "Black"
+    responses:
+      "201":
+        description: Created
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/CreateProductResponse"
+            examples:
+              sample:
+                value:
+                  message: Product Created Successfully
+                  product:
+                    id: 65b1f0a2f7a1c2d3e4f5a777
+                    name:
+                      en: iPhone 15
+                      ar: ايفون 15
+                    description:
+                      en: Latest iPhone
+                      ar: أحدث آيفون
+                    image:
+                      fileName: products/abc123
+                      imageSize: 24567
+                      imageUrl: https://res.cloudinary.com/xxx/image/upload/...
+                    category: 65b1f0a2f7a1c2d3e4f5a111
+                    attributes:
+                      - attribute: 65b1f0a2f7a1c2d3e4f5a555
+                        nameSnapshot:
+                          en: Color
+                          ar: اللون
+                        typeSnapshot: select
+                        value: Black
+                    price:
+                      originalPrice: 1200
+                      salePrice: 1100
+                      finalPrice: 990
+                    discountPrice:
+                      discountType: percentage
+                      discountValue: 10
+                    published: false
+                    sku: PRD-ABC123
+                    stock: 50
+                    createdBy: 65b1f0a2f7a1c2d3e4f5a333
+                    createdAt: "2026-02-04T12:00:00.000Z"
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              name_required:
+                value:
+                  status: fail
+                  message: Name(Ar,En) Are Required
+              description_required:
+                value:
+                  status: fail
+                  message: description(Ar,En) Are Required
+              images_required:
+                value:
+                  status: fail
+                  message: At least one product image is required
+              category_required:
+                value:
+                  status: fail
+                  message: Category is required
+              price_required:
+                value:
+                  status: fail
+                  message: Original Price and Sale Price are required
+              attribute_not_allowed:
+                value:
+                  status: fail
+                  message: Attribute not allowed for this category
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              category_not_found:
+                value:
+                  status: fail
+                  message: Category Not Founded
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+searchProducts:
+  get:
+    summary: Search products
+    description: Search products by name/description (published only).
+    tags:
+      - Products
+    parameters:
+      - name: q
+        in: query
+        required: true
+        schema:
+          type: string
+        description: Search term (min 2 chars).
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          example: 10
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/SearchProductsResponse"
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              short_term:
+                value:
+                  status: fail
+                  message: Search term must be at least 2 characters
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+adminListProducts:
+  get:
+    summary: List products (admin)
+    description: Returns a paginated list of products.
+    tags:
+      - Products
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: name
+        in: query
+        schema:
+          type: string
+      - name: published
+        in: query
+        schema:
+          type: boolean
+      - name: category
+        in: query
+        schema:
+          type: string
+      - name: priceMin
+        in: query
+        schema:
+          type: number
+      - name: priceMax
+        in: query
+        schema:
+          type: number
+      - name: sort
+        in: query
+        schema:
+          type: string
+          enum: [price_asc, price_desc, newest, oldest]
+      - name: attributes
+        in: query
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+        description: Filter by attributes (e.g. attributes[attributeId]=value).
+      - name: page
+        in: query
+        schema:
+          type: integer
+          example: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          example: 12
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ProductsListResponse"
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+publicListProducts:
+  get:
+    summary: List products (public)
+    description: Returns a paginated list of published products.
+    tags:
+      - Products
+    parameters:
+      - name: category
+        in: query
+        schema:
+          type: string
+      - name: priceMin
+        in: query
+        schema:
+          type: number
+      - name: priceMax
+        in: query
+        schema:
+          type: number
+      - name: sort
+        in: query
+        schema:
+          type: string
+          enum: [price_asc, price_desc, newest, oldest]
+      - name: attributes
+        in: query
+        style: deepObject
+        explode: true
+        schema:
+          type: object
+        description: Filter by attributes (e.g. attributes[attributeId]=value).
+      - name: page
+        in: query
+        schema:
+          type: integer
+          example: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          example: 12
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ProductsListResponse"
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+publicGetProduct:
+  get:
+    summary: Get product (public)
+    tags:
+      - Products
+    parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/GetProductResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              not_found:
+                value:
+                  status: fail
+                  message: Product Not Found
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+adminGetProduct:
+  get:
+    summary: Get product (admin)
+    tags:
+      - Products
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/GetProductResponse"
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              not_found:
+                value:
+                  status: fail
+                  message: Product Not Found
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+adminDeleteProduct:
+  delete:
+    summary: Delete product
+    tags:
+      - Products
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/MessageResponse"
+            examples:
+              sample:
+                value:
+                  message: Product Deleted Successfully
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              not_found:
+                value:
+                  status: fail
+                  message: Product Not Found
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+adminUpdateProduct:
+  patch:
+    summary: Update product
+    tags:
+      - Products
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "../schemas/index.yaml#/UpdateProductRequest"
+          examples:
+            sample:
+              value:
+                nameEn: iPhone 15 Pro
+                nameAr: ايفون 15 برو
+                descriptionEn: Updated description
+                descriptionAr: وصف محدث
+                salePrice: 1000
+                discountType: fixed
+                discountValue: 50
+                stock: 40
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/UpdateProductResponse"
+            examples:
+              sample:
+                value:
+                  message: Product Updated Successfully
+                  product:
+                    id: 65b1f0a2f7a1c2d3e4f5a777
+                    name:
+                      en: iPhone 15 Pro
+                      ar: ايفون 15 برو
+                    description:
+                      en: Updated description
+                      ar: وصف محدث
+                    image:
+                      fileName: products/abc123
+                      imageSize: 24567
+                      imageUrl: https://res.cloudinary.com/xxx/image/upload/...
+                    category: 65b1f0a2f7a1c2d3e4f5a111
+                    price:
+                      originalPrice: 1200
+                      salePrice: 1000
+                      finalPrice: 950
+                    discountPrice:
+                      discountType: fixed
+                      discountValue: 50
+                    published: false
+                    sku: PRD-ABC123
+                    stock: 40
+                    createdBy: 65b1f0a2f7a1c2d3e4f5a333
+                    createdAt: "2026-02-04T12:00:00.000Z"
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              invalid_attribute:
+                value:
+                  status: fail
+                  message: Invalid attribute
+              attribute_not_allowed:
+                value:
+                  status: fail
+                  message: Attribute not allowed for this category
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              not_found:
+                value:
+                  status: fail
+                  message: Product not found
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+adminTogglePublishProduct:
+  patch:
+    summary: Toggle product publish status
+    tags:
+      - Products
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: productId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ToggleProductPublishResponse"
+            examples:
+              sample:
+                value:
+                  message: Product Published Successfully
+                  status: true
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              not_found:
+                value:
+                  status: fail
+                  message: Product Not Found
+      "409":
+        description: Conflict
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              category_unpublished:
+                value:
+                  status: fail
+                  message: Cannot publish product in unpublished category
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"

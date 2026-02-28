@@ -1,0 +1,176 @@
+adminCreateAttribute:
+  post:
+    summary: Create attribute
+    tags:
+      - Attributes
+    security:
+      - bearerAuth: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/index.yaml#/CreateAttributeRequest"
+          examples:
+            sample:
+              value:
+                nameEn: Color
+                nameAr: اللون
+                type: select
+                options:
+                  - Black
+                  - White
+    responses:
+      "201":
+        description: Created
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/CreateAttributeResponse"
+            examples:
+              sample:
+                value:
+                  message: Attribute Created Successfully
+                  attribute:
+                    id: 65b1f0a2f7a1c2d3e4f5aaaa
+                    name:
+                      en: Color
+                      ar: اللون
+                    type: select
+                    options:
+                      - Black
+                      - White
+                    createdBy: 65b1f0a2f7a1c2d3e4f5a333
+                    createdAt: "2026-02-04T12:00:00.000Z"
+      "400":
+        description: Bad Request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              required_fields:
+                value:
+                  status: fail
+                  message: Name(Ar,En) and Type Are Required
+              options_required:
+                value:
+                  status: fail
+                  message: Options must be a non-empty array
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "409":
+        description: Conflict
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              duplicate:
+                value:
+                  status: fail
+                  message: name.en already exists
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+adminListAttributes:
+  get:
+    summary: List attributes
+    tags:
+      - Attributes
+    security:
+      - bearerAuth: []
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/AttributesListResponse"
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+
+adminDeleteAttribute:
+  delete:
+    summary: Delete attribute
+    description: Soft deletes the attribute and removes it from categories.
+    tags:
+      - Attributes
+    security:
+      - bearerAuth: []
+    parameters:
+      - name: attributeId
+        in: path
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/MessageResponse"
+            examples:
+              sample:
+                value:
+                  message: Attribute Deleted Successfully
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "403":
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+      "404":
+        description: Not Found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"
+            examples:
+              not_found:
+                value:
+                  status: fail
+                  message: Attribute Not Founded
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/index.yaml#/ErrorResponse"

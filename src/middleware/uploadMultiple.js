@@ -8,4 +8,4 @@ const imageFilter = (req, file, cb) => {
 };
 
 exports.uploadMultiple = (fieldName, max = 5) =>
-  multer({ storage, fileFilter }).array(fieldName, max);
+  multer({ storage, fileFilter: imageFilter }).array(fieldName, max);

@@ -1,6 +1,7 @@
 const AppError = require("../../../core/errors/appError");
 const Category = require("../entities/categoryEntity");
 const CategoryRepository = require("../repositories/categoryRepository");
+const AttributeRepository = require("../../attributes/repositories/attributeRepository");
 const CategoryDataResponseDTO = require("../DTO/categoryDataResponseDTO");
 const ImageService = require("../../../shared/services/imageUploadService");
 const {
@@ -10,6 +11,7 @@ const {
 class CreateCategoryUseCase {
   constructor() {
     this.categoryRepo = new CategoryRepository();
+    this.attributeRepo = new AttributeRepository();
   }
 
   async execute(loggedInUser, body, imageFile) {
@@ -28,6 +30,26 @@ class CreateCategoryUseCase {
         throw new AppError("Parent category not found", 400);
       }
     }
+
+    let validatedAttributes = [];
+    if (body.attributes?.length) {
+      const attributeIds = body.attributes.map((a) => a.attribute);
+
+      const attributes = await this.attributeRepo.find({
+        _id: { $in: attributeIds },
+        isDeleted: false,
+      });
+
+      if (attributes.length !== attributeIds.length) {
+        throw new AppError("One or more attributes are invalid", 400);
+      }
+
+      validatedAttributes = body.attributes.map((attr) => ({
+        attribute: attr.attribute,
+        required: !!attr.required,
+      }));
+    }
+
     let imageData;
     try {
       imageData = await ImageService.uploadSingle({
@@ -37,6 +59,7 @@ class CreateCategoryUseCase {
 
       const data = Category.createCategory({
         ...body,
+        attributes: validatedAttributes,
         image: {
           fileName: imageData.publicId,
           size: imageData.size,
