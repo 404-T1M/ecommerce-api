@@ -2,19 +2,17 @@ const userRepository = require("../repositories/userRepository");
 const AppError = require("../../../core/errors/appError");
 const User = require("../entities/userEntity");
 const ListUserResponseDTO = require("../DTO/ListUserResponseDTO");
+const {
+  assertAdminPermission,
+} = require("../../../core/authorization/checkAdminAndHisPermission");
 
 class getUserDetailsUseCase {
   constructor() {
     this.userRepo = new userRepository();
   }
-  async execute(user, userId) {
-    if (!user) {
-      throw new AppError("Unauthenticated", 401);
-    }
+  async execute(loggedInUser, userId) {
+    await assertAdminPermission(loggedInUser, "users.create");
 
-    if (user.role !== "admin") {
-      throw new AppError("Your Not Allowed To This", 403);
-    }
     const result = await this.userRepo.findOne({ _id: userId });
 
     if (!result) {

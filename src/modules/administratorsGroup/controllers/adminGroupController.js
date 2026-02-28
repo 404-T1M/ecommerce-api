@@ -27,7 +27,16 @@ class administratorsGroupController {
 
   listAllAdminGroups = catchAsync(async (req, res, next) => {
     const loggedInUser = req.user;
-    const result = await this.listAdminGroupsUseCase.execute(loggedInUser);
+    const filter = {
+      name: req.query.name,
+      page: Number(req.query.page) || 1,
+      limit: Number(req.query.limit) || 10,
+      sort: req.query.sort,
+    };
+    const result = await this.listAdminGroupsUseCase.execute(
+      loggedInUser,
+      filter,
+    );
     res.status(200).json({
       adminGroups: result.data,
       meta: result.meta,

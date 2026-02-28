@@ -13,14 +13,10 @@ class deleteUserUseCase {
     this.adminGroupRepo = new adminGroupRepository();
   }
   async execute(loggedInUser, customerId) {
-    await assertAdminPermission(
-      loggedInUser,
-      this.adminGroupRepo,
-      "customers.delete",
-    );
+    await assertAdminPermission(loggedInUser, "customers.delete");
 
     let customer = await this.userRepo.findOne({
-      id: customerId,
+      _id: customerId,
     });
     if (!customer) {
       throw new AppError("User Not Found", 404);

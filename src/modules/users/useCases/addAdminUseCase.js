@@ -15,11 +15,7 @@ class addAdminUseCase {
     this.adminGroupRepo = new adminGroupRepository();
   }
   async execute(loggedInUser, body) {
-    await assertAdminPermission(
-      loggedInUser,
-      this.adminGroupRepo,
-      "users.create",
-    );
+    await assertAdminPermission(loggedInUser, "users.create");
 
     const [existingEmail, existingPhone] = await Promise.all([
       this.userRepo.findByEmail(body.email),
@@ -34,7 +30,9 @@ class addAdminUseCase {
       throw new AppError("Phone number already registered", 409);
     }
 
-    const adminGroup = await this.adminRepo.findOne({ _id: body.adminGroup });
+    const adminGroup = await this.adminGroupRepo.findOne({
+      _id: body.adminGroup,
+    });
     if (!adminGroup) {
       throw new AppError("Admin Group Not Founded", 404);
     }

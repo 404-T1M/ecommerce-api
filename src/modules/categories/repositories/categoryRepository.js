@@ -14,58 +14,32 @@ class categoryRepository {
     return ids;
   }
 
-  buildQuery(filters) {
-    const query = {};
+  async find(filters, options = {}) {
+    let query = Category.find(filters);
 
-    if (filters.published !== undefined) {
-      query.published = filters.published;
+    if (options.populateParent) {
+      query = query.populate("parent", "name slug");
     }
 
-    if (filters.name) {
-      query.$or = [
-        { "name.en": { $regex: filters.name, $options: "i" } },
-        { "name.ar": { $regex: filters.name, $options: "i" } },
-      ];
+    if (options.populateCreatedBy) {
+      query = query.populate("createdBy", "name email");
     }
 
-    if (filters.parent) {
-      query.parent = filters.parent;
+    if (options.populateAttributes) {
+      query = query.populate("attributes.attribute", "_id name type");
     }
 
-    if (filters.fromDate || filters.toDate) {
-      query.createdAt = {};
-      if (filters.fromDate) {
-        query.createdAt.$gte = new Date(filters.fromDate);
-      }
-      if (filters.toDate) {
-        query.createdAt.$lte = new Date(filters.toDate);
-      }
+    if (options.page && options.limit) {
+      query = query
+        .skip((options.page - 1) * options.limit)
+        .limit(options.limit);
     }
 
     return query;
   }
 
-  async find(filters, options = {}) {
-    const query = this.buildQuery(filters);
-
-    let mongooseQuery = Category.find(query);
-
-    if (options.populateParent) {
-      mongooseQuery = mongooseQuery.populate("parent", "name slug");
-    }
-
-    if (options.populateCreatedBy) {
-      mongooseQuery = mongooseQuery.populate("createdBy", "name email");
-    }
-
-    return mongooseQuery
-      .skip((filters.page - 1) * filters.limit)
-      .limit(filters.limit);
-  }
-
   async count(filters) {
-    const query = this.buildQuery(filters);
-    return Category.countDocuments(query);
+    return Category.countDocuments(filters);
   }
 
   async findOne(filter) {
@@ -85,7 +59,7 @@ class categoryRepository {
   }
 
   async updateMany(filter, update) {
-    return Category.updateMany(filter, update, {
+    return await Category.updateMany(filter, update, {
       new: true,
       runValidators: true,
     });

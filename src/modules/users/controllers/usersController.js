@@ -108,8 +108,8 @@ class UsersController {
 
   changeUserStatus = catchAsync(async (req, res, nex) => {
     const user = req.user;
-    const { customerId } = req.params;
-    const result = await this.changeUserStatusUseCase.execute(user, customerId);
+    const { userId } = req.params;
+    const result = await this.changeUserStatusUseCase.execute(user, userId);
     res.status(200).json({
       message: "User Status Changed Successfully",
       user: result,
@@ -140,10 +140,13 @@ class UsersController {
     const filter = {
       role: "admin",
       isDeleted: false,
+      name: req.query.name,
+      status: req.query.status,
       page: Number(req.query.page) || 1,
-      limit: Number(req.query.limit) || 5,
+      limit: Number(req.query.limit) || 10,
+      sort: req.query.sort,
     };
-    const result = await this.adminListUsersUseCase.execute(user, filter);
+    const result = await this.listUsersUseCase.execute(user, filter);
     res.status(200).json({
       users: result.data,
       meta: result.meta,

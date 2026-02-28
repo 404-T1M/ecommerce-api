@@ -36,6 +36,20 @@ const categorySchema = mongoose.Schema(
       ref: "Category",
     },
 
+    attributes: [
+      {
+        attribute: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Attribute",
+          required: true,
+        },
+        required: {
+          type: Boolean,
+          default: false,
+        },
+      },
+    ],
+
     published: {
       type: Boolean,
       default: false,
@@ -61,6 +75,11 @@ const categorySchema = mongoose.Schema(
     },
 
     isFeatured: {
+      type: Boolean,
+      default: false,
+    },
+
+    isDeleted: {
       type: Boolean,
       default: false,
     },

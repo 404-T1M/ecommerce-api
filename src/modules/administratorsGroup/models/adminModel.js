@@ -26,6 +26,10 @@ const adminGroupSchema = new mongoose.Schema(
           "adminGroups.update",
           "adminGroups.delete",
 
+          "attributes.list",
+          "attributes.create",
+          "attributes.delete",
+
           "categories.list",
           "categories.create",
           "categories.update",

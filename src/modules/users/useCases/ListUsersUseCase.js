@@ -11,19 +11,19 @@ class adminListUsersUseCase {
     this.adminGroupRepo = new adminGroupRepository();
   }
   async execute(loggedInUser, filter) {
-    await assertAdminPermission(
-      loggedInUser,
-      this.adminGroupRepo,
-      "users.list",
-    );
+    await assertAdminPermission(loggedInUser, "users.list");
 
-    const users = await this.userRepo.find(filter);
+    const [users, total] = await Promise.all([
+      this.userRepo.find(filter),
+      this.userRepo.count(filter),
+    ]);
     return {
       data: users.map((userItem) => new ListUserResponseDTO(userItem)),
       meta: {
-        total: users.length,
+        total,
         page: filter.page,
         limit: filter.limit,
+        totalPages: Math.ceil(total / filter.limit),
       },
     };
   }

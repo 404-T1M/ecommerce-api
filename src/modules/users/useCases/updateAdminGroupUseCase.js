@@ -11,18 +11,16 @@ class updateAdminUseCase {
     this.adminGroupRepo = new adminGroupRepository();
   }
   async execute(loggedInUser, body, adminId) {
-    await assertAdminPermission(
-      loggedInUser,
-      this.adminGroupRepo,
-      "users.update",
-    );
+    await assertAdminPermission(loggedInUser, "users.update");
 
     const admin = await this.userRepo.findOne({ _id: adminId, role: "admin" });
     if (!admin) {
       throw new AppError("Admin Not Founded", 404);
     }
 
-    const adminGroup = await this.adminRepo.findOne({ _id: body });
+    const adminGroup = await this.adminGroupRepo.findOne({
+      _id: body.adminGroup,
+    });
     if (!adminGroup) {
       throw new AppError("Admin Group Not Founded", 404);
     }

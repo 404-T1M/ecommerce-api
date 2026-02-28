@@ -13,11 +13,7 @@ class changeUserStatusUseCase {
     this.adminGroupRepo = new adminGroupRepository();
   }
   async execute(loggedInUser, customerId) {
-    await assertAdminPermission(
-      loggedInUser,
-      this.adminGroupRepo,
-      "customers.update",
-    );
+    await assertAdminPermission(loggedInUser, "customers.update");
 
     let customer = await this.userRepo.findOne({
       _id: customerId,

@@ -57,7 +57,7 @@ router.patch(
 );
 
 router.delete(
-  "/admin/users/:userId/delete",
+  "/admin/users/:customerId/delete",
   protect,
   restrictTo("admin"),
   (req, res, next) => {

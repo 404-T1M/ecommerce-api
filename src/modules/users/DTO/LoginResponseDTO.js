@@ -9,7 +9,17 @@ class UserLoginDTO {
     this.status = user.status;
     this.adminGroup = user.adminGroup;
     this.createdAt = user.createdAt;
-    this.profileImage = user.profileImage;
+    this.profileImage = user.image
+      ? {
+          fileName: user.profileImage.fileName,
+          imageSize: user.profileImage.size,
+          imageUrl: buildImageUrl(user.profileImage.fileName, {
+            crop: "fill",
+            quality: "auto",
+            fetch_format: "auto",
+          }),
+        }
+      : null;
     this.token = token;
   }
 }

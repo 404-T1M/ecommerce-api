@@ -11,5 +11,5 @@ exports.uploadSingle = (fieldName) =>
   multer({
     storage,
     fileFilter: imageFilter,
-    limits: { fileSize: 3 * 1024 * 1024 },
+    limits: { fileSize: 5 * 1024 * 1024 },
   }).single(fieldName);

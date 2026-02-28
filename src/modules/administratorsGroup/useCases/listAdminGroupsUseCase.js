@@ -8,14 +8,31 @@ class ListAdminGroupsUseCase {
   constructor() {
     this.adminGroupRepo = new adminGroupRepository();
   }
-  async execute(loggedInUser) {
+  async execute(loggedInUser, filter = {}) {
     await assertAdminPermission(loggedInUser, "adminGroups.list");
 
-    const adminGroups = await this.adminGroupRepo.find();
+    const pagination = {
+      page: Number(filter.page) || 1,
+      limit: Number(filter.limit) || 10,
+    };
+
+    const query = {
+      ...filter,
+      ...pagination,
+    };
+
+    const [adminGroups, total] = await Promise.all([
+      this.adminGroupRepo.find(query),
+      this.adminGroupRepo.count(query),
+    ]);
+
     return {
       data: adminGroups.map((group) => new adminGroupResponseDTO(group)),
       meta: {
-        total: adminGroups.length,
+        total,
+        page: pagination.page,
+        limit: pagination.limit,
+        totalPages: Math.ceil(total / pagination.limit),
       },
     };
   }

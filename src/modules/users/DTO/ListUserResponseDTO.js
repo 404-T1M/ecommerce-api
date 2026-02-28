@@ -6,7 +6,17 @@ class ListUserResponseDTO {
     this.mobilePhone = user.mobilePhone;
     this.role = user.role;
     this.adminGroup = user.adminGroup;
-    this.profileImage = user.profileImage;
+    this.profileImage = user.image
+      ? {
+          fileName: user.profileImage.fileName,
+          imageSize: user.profileImage.size,
+          imageUrl: buildImageUrl(user.profileImage.fileName, {
+            crop: "fill",
+            quality: "auto",
+            fetch_format: "auto",
+          }),
+        }
+      : null;
     this.emailVerified = user.emailVerified;
     this.status = user.status;
     this.createdAt = user.createdAt;

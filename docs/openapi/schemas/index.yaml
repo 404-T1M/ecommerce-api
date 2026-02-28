@@ -639,6 +639,340 @@ CategoryData:
       format: date-time
       example: "2026-02-04T12:00:00.000Z"
 
+CreateProductRequest:
+  type: object
+  required:
+    - nameEn
+    - nameAr
+    - descriptionEn
+    - descriptionAr
+    - category
+    - originalPrice
+    - salePrice
+    - productImages
+  properties:
+    nameEn:
+      type: string
+      example: iPhone 15
+    nameAr:
+      type: string
+      example: ايفون 15
+    descriptionEn:
+      type: string
+      example: Latest iPhone
+    descriptionAr:
+      type: string
+      example: أحدث آيفون
+    category:
+      type: string
+      example: 65b1f0a2f7a1c2d3e4f5a111
+    originalPrice:
+      type: number
+      example: 1200
+    salePrice:
+      type: number
+      example: 1100
+    discountType:
+      type: string
+      enum: [percentage, fixed]
+      example: percentage
+    discountValue:
+      type: number
+      example: 10
+    stock:
+      type: integer
+      example: 50
+    attributes:
+      type: array
+      items:
+        $ref: "#/ProductAttributeInput"
+    productImages:
+      type: array
+      items:
+        type: string
+        format: binary
+      description: Product images files.
+
+UpdateProductRequest:
+  type: object
+  properties:
+    nameEn:
+      type: string
+    nameAr:
+      type: string
+    descriptionEn:
+      type: string
+    descriptionAr:
+      type: string
+    category:
+      type: string
+    originalPrice:
+      type: number
+    salePrice:
+      type: number
+    discountType:
+      type: string
+      enum: [percentage, fixed]
+    discountValue:
+      type: number
+    stock:
+      type: integer
+    attributes:
+      type: array
+      items:
+        $ref: "#/ProductAttributeInput"
+    productImages:
+      type: array
+      items:
+        type: string
+        format: binary
+
+ProductAttributeInput:
+  type: object
+  required:
+    - attributeId
+    - value
+  properties:
+    attributeId:
+      type: string
+    value:
+      oneOf:
+        - type: string
+        - type: number
+        - type: boolean
+
+ProductImage:
+  type: object
+  properties:
+    fileName:
+      type: string
+      example: products/abc123
+    imageSize:
+      type: integer
+      example: 24567
+    imageUrl:
+      type: string
+      example: https://res.cloudinary.com/xxx/image/upload/...
+
+ProductPrice:
+  type: object
+  properties:
+    originalPrice:
+      type: number
+      example: 1200
+    salePrice:
+      type: number
+      example: 1100
+    finalPrice:
+      type: number
+      example: 990
+
+ProductDiscount:
+  type: object
+  properties:
+    discountType:
+      type: string
+      enum: [percentage, fixed]
+      example: percentage
+    discountValue:
+      type: number
+      example: 10
+
+ProductAttribute:
+  type: object
+  properties:
+    attribute:
+      type: string
+    nameSnapshot:
+      type: object
+      properties:
+        en:
+          type: string
+        ar:
+          type: string
+    typeSnapshot:
+      type: string
+      enum: [text, number, select, boolean]
+    value:
+      oneOf:
+        - type: string
+        - type: number
+        - type: boolean
+
+ProductData:
+  type: object
+  properties:
+    id:
+      type: string
+      example: 65b1f0a2f7a1c2d3e4f5a777
+    name:
+      type: object
+      properties:
+        en:
+          type: string
+        ar:
+          type: string
+    description:
+      type: object
+      properties:
+        en:
+          type: string
+        ar:
+          type: string
+    image:
+      $ref: "#/ProductImage"
+    category:
+      type: string
+      example: 65b1f0a2f7a1c2d3e4f5a111
+    attributes:
+      type: array
+      items:
+        $ref: "#/ProductAttribute"
+    price:
+      $ref: "#/ProductPrice"
+    discountPrice:
+      $ref: "#/ProductDiscount"
+    published:
+      type: boolean
+      example: false
+    sku:
+      type: string
+      example: PRD-ABC123
+    stock:
+      type: integer
+      example: 50
+    createdBy:
+      type: string
+      example: 65b1f0a2f7a1c2d3e4f5a333
+    createdAt:
+      type: string
+      format: date-time
+      example: "2026-02-04T12:00:00.000Z"
+
+CreateProductResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Product Created Successfully
+    product:
+      $ref: "#/ProductData"
+
+UpdateProductResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Product Updated Successfully
+    product:
+      $ref: "#/ProductData"
+
+GetProductResponse:
+  type: object
+  properties:
+    product:
+      $ref: "#/ProductData"
+
+ProductsListResponse:
+  type: object
+  properties:
+    products:
+      type: array
+      items:
+        $ref: "#/ProductData"
+    meta:
+      $ref: "#/MetaPagination"
+
+SearchProductsResponse:
+  type: object
+  properties:
+    results:
+      type: array
+      items:
+        $ref: "#/ProductData"
+
+ToggleProductPublishResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Product Published Successfully
+    status:
+      type: boolean
+      example: true
+
+CreateAttributeRequest:
+  type: object
+  required:
+    - nameEn
+    - nameAr
+    - type
+  properties:
+    nameEn:
+      type: string
+      example: Color
+    nameAr:
+      type: string
+      example: اللون
+    type:
+      type: string
+      enum: [text, number, select, boolean]
+      example: select
+    options:
+      type: array
+      items:
+        type: string
+      example: [Black, White]
+
+AttributeData:
+  type: object
+  properties:
+    id:
+      type: string
+      example: 65b1f0a2f7a1c2d3e4f5aaaa
+    name:
+      type: object
+      properties:
+        en:
+          type: string
+          example: Color
+        ar:
+          type: string
+          example: اللون
+    type:
+      type: string
+      enum: [text, number, select, boolean]
+      example: select
+    options:
+      type: array
+      items:
+        type: string
+      example: [Black, White]
+    createdBy:
+      type: string
+      example: 65b1f0a2f7a1c2d3e4f5a333
+    createdAt:
+      type: string
+      format: date-time
+      example: "2026-02-04T12:00:00.000Z"
+
+CreateAttributeResponse:
+  type: object
+  properties:
+    message:
+      type: string
+      example: Attribute Created Successfully
+    attribute:
+      $ref: "#/AttributeData"
+
+AttributesListResponse:
+  type: object
+  properties:
+    attributes:
+      type: array
+      items:
+        $ref: "#/AttributeData"
+
 Permission:
   type: string
   enum:

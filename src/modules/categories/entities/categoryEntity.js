@@ -7,6 +7,7 @@ class Category {
     this.slug = data.slug;
     this.description = data.description;
     this.parent = data.parent;
+    this.attributes = data.attributes;
     this.order = data.order;
     this.published = data.published;
     this.image = data.image
@@ -37,6 +38,7 @@ class Category {
         ar: body.descriptionAr ?? null,
       },
       parent: body.parent ?? null,
+      attributes: body.attributes ?? null,
       order: body.order,
       published: body.published ?? false,
       image: body.image,
