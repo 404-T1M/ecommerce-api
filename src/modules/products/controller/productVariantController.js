@@ -43,8 +43,16 @@ class ProductController {
   updateVariant = catchAsync(async (req, res, next) => {
     const loggedInUser = req.user;
     const { variantId } = req.params;
-    const { variants } = req.body;
+    let { variants } = req.body;
     const variantImage = req.file;
+
+    if (variants && typeof variants === "string") {
+      try {
+        variants = JSON.parse(variants);
+      } catch (err) {
+        throw new AppError("Invalid variants JSON: " + variants, 400);
+      }
+    }
 
     const variant = await this.updateVariantsUseCase.execute(
       loggedInUser,
