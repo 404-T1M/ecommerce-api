@@ -33,7 +33,6 @@ class ListAllProductsUseCase {
       }
     }
 
-    // Role-based filtering for published & isDeleted
     if (!loggedInUser || loggedInUser.role !== "admin") {
       query.published = true;
       query.isDeleted = false;
