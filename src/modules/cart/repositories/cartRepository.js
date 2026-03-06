@@ -32,14 +32,14 @@ class CartRepository {
     return savedCart;
   }
 
-  updateOne(filter, update) {
-    return Cart.findOneAndUpdate(filter, update, {
+  async updateOne(filter, update) {
+    return await Cart.findOneAndUpdate(filter, update, {
       new: true,
     });
   }
 
-  deleteByUser(userId) {
-    return Cart.findOneAndDelete({ user: userId });
+  async deleteByUser(userId) {
+    return await Cart.findOneAndDelete({ user: userId });
   }
 }
 
