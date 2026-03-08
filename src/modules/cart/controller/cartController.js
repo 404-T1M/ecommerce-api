@@ -48,10 +48,7 @@ class CartController {
     const loggedInUser = req.user;
     const { variantId } = req.body;
 
-    const cart = await this.deleteItemUseCase.execute(
-      loggedInUser,
-      variantId,
-    );
+    const cart = await this.deleteItemUseCase.execute(loggedInUser, variantId);
 
     res.status(201).json({
       message: "Item Deleted from Cart Successfully",
@@ -67,6 +64,21 @@ class CartController {
     res.status(201).json({
       message: "Success",
       cart,
+    });
+  });
+
+  applyCoupon = catchAsync(async (req, res, next) => {
+    const loggedInUser = req.user;
+    const { couponCode } = req.body;
+
+    const result = await this.applyCouponUseCase.execute(
+      loggedInUser,
+      couponCode,
+    );
+
+    res.status(200).json({
+      message: "Coupon Applied Successfully",
+      result,
     });
   });
 }
