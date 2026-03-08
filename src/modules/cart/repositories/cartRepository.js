@@ -4,9 +4,10 @@ class CartRepository {
   async findByUser(userId) {
     return await Cart.findOne({ user: userId }).populate({
       path: "items.variant",
+      select: "finalPrice price image product",
       populate: {
         path: "product",
-        select: "name published isDeleted",
+        select: "name published isDeleted category",
       },
     });
   }

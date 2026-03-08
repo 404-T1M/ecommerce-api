@@ -1,0 +1,54 @@
+const AppError = require("../../../core/errors/appError");
+const CartRepository = require("../repositories/cartRepository");
+const CouponRepository = require("../../coupons/repositories/couponRepository");
+const CartPricingService = require("../../../shared/services/cartService");
+
+class ApplyCouponUseCase {
+  constructor() {
+    this.cartRepository = new CartRepository();
+    this.couponRepository = new CouponRepository();
+  }
+
+  async execute(loggedInUser, couponCode) {
+    const cart = await this.cartRepository.findByUser(loggedInUser.id);
+    if (!cart) {
+      throw new AppError("Cart not found", 404);
+    }
+
+    const pricesChanged = CartPricingService.refreshPrices(cart);
+    if (pricesChanged) {
+      await this.cartRepository.save(cart);
+    }
+
+    const coupon = await this.couponRepository.findByCode(couponCode);
+    if (!coupon || !coupon.isActive) {
+      throw new AppError("Invalid coupon code", 400);
+    }
+    CartPricingService.verifyCoupons(coupon, loggedInUser);
+
+    const cartTotal = CartPricingService.calculateTotal(cart.items);
+    if (coupon.minOrderTotal && cartTotal < coupon.minOrderTotal) {
+      throw new AppError(
+        `Minimum order total of ${coupon.minOrderTotal} is required to use this coupon`,
+        400,
+      );
+    }
+
+    const allowedItems = cart.items.filter((item) =>
+      CartPricingService.checkItemEligibility(item, coupon),
+    );
+
+    const discount = CartPricingService.calculateDiscountedTotal(
+      allowedItems,
+      coupon,
+    );
+
+    return {
+      subtotal: cartTotal,
+      discount,
+      total: Math.max(0, cartTotal - discount),
+    };
+  }
+}
+
+module.exports = ApplyCouponUseCase;
