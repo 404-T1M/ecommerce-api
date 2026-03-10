@@ -3,7 +3,7 @@ const AppError = require("../../../core/errors/appError");
 const User = require("../entities/userEntity");
 const ListUserResponseDTO = require("../DTO/ListUserResponseDTO");
 
-class getUserDetailsUseCase {
+class GetMeUseCase {
   constructor() {
     this.userRepo = new userRepository();
   }
@@ -21,4 +21,4 @@ class getUserDetailsUseCase {
   }
 }
 
-module.exports = getUserDetailsUseCase;
+module.exports = GetMeUseCase;

@@ -14,7 +14,7 @@ router.post("/auth/login", (req, res, next) => {
   controller.login(req, res, next);
 });
 
-router.post("/auth/me", protect, (req, res, next) => {
+router.get("/auth/me", protect, (req, res, next) => {
   controller.getMe(req, res, next);
 });
 
