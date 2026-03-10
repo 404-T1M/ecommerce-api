@@ -13,25 +13,31 @@ const VALID_STATUSES = [
   "cancelled",
 ];
 
-const VALID_PAYMENT_STATUSES = ["refunded"];
+const VALID_PAYMENT_STATUSES = ["pending", "paid", "failed", "refunded"];
 
 class GetAllOrdersUseCase {
   constructor() {
     this.orderRepository = new OrderRepository();
   }
 
-  async execute(adminUser, { status, page = 1, limit = 10 }) {
+  async execute(adminUser, { status, paymentStatus, page = 1, limit = 10 }) {
     await assertAdminPermission(adminUser, "orders.read");
 
     const filter = {};
     if (status) {
-      if (VALID_PAYMENT_STATUSES.includes(status)) {
-        filter.paymentStatus = status;
-      } else if (VALID_STATUSES.includes(status)) {
-        filter.status = status;
-      } else {
+      if (!VALID_STATUSES.includes(status)) {
         throw new AppError(`Invalid status filter: ${status}`, 400);
       }
+      filter.status = status;
+    }
+    if (paymentStatus) {
+      if (!VALID_PAYMENT_STATUSES.includes(paymentStatus)) {
+        throw new AppError(
+          `Invalid paymentStatus filter: ${paymentStatus}`,
+          400,
+        );
+      }
+      filter.paymentStatus = paymentStatus;
     }
 
     return await this.orderRepository.find(filter, page, limit);

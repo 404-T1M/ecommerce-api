@@ -14,6 +14,10 @@ router.post("/auth/login", (req, res, next) => {
   controller.login(req, res, next);
 });
 
+router.post("/auth/me", protect, (req, res, next) => {
+  controller.getMe(req, res, next);
+});
+
 router.post("/auth/verify-email", (req, res, next) => {
   controller.verifyEmail(req, res, next);
 });

@@ -106,6 +106,15 @@ class UsersController {
     });
   });
 
+  getMe = catchAsync(async (req, res, next) => {
+    const user = req.user;
+
+    const result = await this.getUserDetailsUseCase.execute(user);
+    res.status(200).json({
+      user: result,
+    });
+  });
+
   changeUserStatus = catchAsync(async (req, res, nex) => {
     const user = req.user;
     const { userId } = req.params;

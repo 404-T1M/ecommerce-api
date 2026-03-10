@@ -77,10 +77,11 @@ class OrderController {
   });
 
   getAllOrders = catchAsync(async (req, res) => {
-    const { status, page = 1, limit = 10 } = req.query;
+    const { status, paymentStatus, page = 1, limit = 10 } = req.query;
 
     const result = await this.getAllOrdersUseCase.execute(req.user, {
       status,
+      paymentStatus,
       page: Number(page),
       limit: Number(limit),
     });
