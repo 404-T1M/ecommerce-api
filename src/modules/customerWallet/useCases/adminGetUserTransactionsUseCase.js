@@ -1,6 +1,9 @@
 const AppError = require("../../../core/errors/appError");
 const WalletTransactionRepository = require("../repositories/walletTransactionRepository");
 const userRepository = require("../../users/repositories/userRepository");
+const {
+  assertAdminPermission,
+} = require("../../../core/authorization/checkAdminAndHisPermission");
 
 class AdminGetUserTransactionsUseCase {
   constructor() {
@@ -8,7 +11,9 @@ class AdminGetUserTransactionsUseCase {
     this.userRepository = new userRepository();
   }
 
-  async execute(userId, { type, page = 1, limit = 10 }) {
+  async execute(adminUser, userId, { type, page = 1, limit = 10 }) {
+    await assertAdminPermission(adminUser, "wallet.read");
+
     const user = await this.userRepository.findOne({
       _id: userId,
       isDeleted: false,

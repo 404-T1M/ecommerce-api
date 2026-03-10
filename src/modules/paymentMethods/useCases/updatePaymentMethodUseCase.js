@@ -55,6 +55,21 @@ class UpdatePaymentMethodUseCase {
       updates.isActive = body.isActive;
     }
 
+    if (body.key !== undefined) {
+      if (typeof body.key !== "string" || !body.key.trim()) {
+        throw new AppError("Payment method key cannot be empty", 400);
+      }
+      const newKey = body.key.trim().toLowerCase();
+      const existingKey = await this.paymentMethodRepo.findOne({ key: newKey });
+      if (existingKey && existingKey._id.toString() !== paymentMethodId) {
+        throw new AppError(
+          "A payment method with this key already exists",
+          400,
+        );
+      }
+      updates.key = newKey;
+    }
+
     const oldImageId = paymentMethod.image?.fileName;
     let imageData = null;
 

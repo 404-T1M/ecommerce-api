@@ -3,7 +3,7 @@ const AddToCartUseCase = require("../useCases/addToCartUseCase");
 const GetCartUseCase = require("../useCases/getCartUseCase");
 const UpdateQuantityUseCase = require("../useCases/updateQuantityUseCase");
 const DeleteItemUseCase = require("../useCases/deleteItemUseCase");
-const ApplyCouponUseCase = require("../useCases/addToCartUseCase");
+const ApplyCouponUseCase = require("../useCases/applyCouponUseCase");
 
 class CartController {
   constructor() {

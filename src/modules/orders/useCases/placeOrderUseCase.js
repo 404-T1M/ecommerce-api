@@ -86,7 +86,12 @@ class PlaceOrderUseCase {
     let discount = 0;
     let appliedCoupon = null;
     if (couponCode) {
-      appliedCoupon = await this.couponRepository.findByCode(couponCode);
+      if (typeof couponCode !== "string" || !couponCode.trim()) {
+        throw new AppError("Invalid coupon code", 400);
+      }
+      appliedCoupon = await this.couponRepository.findOne({
+        code: couponCode.trim().toUpperCase(),
+      });
       if (!appliedCoupon || !appliedCoupon.isActive) {
         throw new AppError("Invalid coupon code", 400);
       }

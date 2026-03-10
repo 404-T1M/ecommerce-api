@@ -2,6 +2,9 @@ const AppError = require("../../../core/errors/appError");
 const WalletRepository = require("../repositories/walletRepository");
 const WalletTransactionRepository = require("../repositories/walletTransactionRepository");
 const userRepository = require("../../users/repositories/userRepository");
+const {
+  assertAdminPermission,
+} = require("../../../core/authorization/checkAdminAndHisPermission");
 
 class AdminCreditWalletUseCase {
   constructor() {
@@ -11,6 +14,8 @@ class AdminCreditWalletUseCase {
   }
 
   async execute(adminUser, { userId, amount, note }) {
+    await assertAdminPermission(adminUser, "wallet.credit");
+
     if (!amount || amount <= 0) {
       throw new AppError("Amount must be greater than 0", 400);
     }
