@@ -11,8 +11,9 @@ const VALID_STATUSES = [
   "shipped",
   "delivered",
   "cancelled",
-  "refunded",
 ];
+
+const VALID_PAYMENT_STATUSES = ["refunded"];
 
 class GetAllOrdersUseCase {
   constructor() {
@@ -24,10 +25,13 @@ class GetAllOrdersUseCase {
 
     const filter = {};
     if (status) {
-      if (!VALID_STATUSES.includes(status)) {
+      if (VALID_PAYMENT_STATUSES.includes(status)) {
+        filter.paymentStatus = status;
+      } else if (VALID_STATUSES.includes(status)) {
+        filter.status = status;
+      } else {
         throw new AppError(`Invalid status filter: ${status}`, 400);
       }
-      filter.status = status;
     }
 
     return await this.orderRepository.find(filter, page, limit);

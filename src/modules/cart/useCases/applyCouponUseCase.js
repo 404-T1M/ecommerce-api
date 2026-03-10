@@ -20,8 +20,11 @@ class ApplyCouponUseCase {
       await this.cartRepository.save(cart);
     }
 
+    if (!couponCode || typeof couponCode !== "string" || !couponCode.trim()) {
+      throw new AppError("Coupon code is required", 400);
+    }
     const coupon = await this.couponRepository.findOne({
-      code: couponCode.toUpperCase(),
+      code: couponCode.trim().toUpperCase(),
     });
     if (!coupon || !coupon.isActive) {
       throw new AppError("Invalid coupon code", 400);

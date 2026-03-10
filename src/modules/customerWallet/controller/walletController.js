@@ -64,7 +64,7 @@ class WalletController {
     const { userId } = req.params;
     const { page = 1, limit = 10, type } = req.query;
 
-    const result = await this.adminGetUserTransactionsUseCase.execute(userId, {
+    const result = await this.adminGetUserTransactionsUseCase.execute(req.user, userId, {
       type,
       page: Number(page),
       limit: Number(limit),
