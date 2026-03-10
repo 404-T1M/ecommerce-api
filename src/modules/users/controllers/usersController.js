@@ -12,6 +12,7 @@ const DeleteUserUseCase = require("../useCases/deleteUserUseCase");
 const AddAdminUseCase = require("../useCases/addAdminUseCase");
 const UpdateAdminGroupUseCase = require("../useCases/updateAdminGroupUseCase");
 const DeleteAdminUseCase = require("../useCases/deleteAdminUseCase");
+const GetMeUseCase = require("../useCases/getMeUseCase");
 const catchAsync = require("../../../shared/utils/catchAsync");
 
 class UsersController {
@@ -30,6 +31,7 @@ class UsersController {
     this.addAdminUseCase = new AddAdminUseCase();
     this.updateAdminGroupUseCase = new UpdateAdminGroupUseCase();
     this.deleteAdminUseCase = new DeleteAdminUseCase();
+    this.getMeUseCase = new GetMeUseCase();
   }
 
   register = catchAsync(async (req, res, next) => {
@@ -101,6 +103,15 @@ class UsersController {
     const { userId } = req.params;
 
     const result = await this.getUserDetailsUseCase.execute(user, userId);
+    res.status(200).json({
+      user: result,
+    });
+  });
+
+  getMe = catchAsync(async (req, res, next) => {
+    const user = req.user;
+
+    const result = await this.getMeUseCase.execute(user);
     res.status(200).json({
       user: result,
     });
