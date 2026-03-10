@@ -3,6 +3,7 @@ const AddToCartUseCase = require("../useCases/addToCartUseCase");
 const GetCartUseCase = require("../useCases/getCartUseCase");
 const UpdateQuantityUseCase = require("../useCases/updateQuantityUseCase");
 const DeleteItemUseCase = require("../useCases/deleteItemUseCase");
+const ApplyCouponUseCase = require("../useCases/addToCartUseCase");
 
 class CartController {
   constructor() {
@@ -10,6 +11,7 @@ class CartController {
     this.getCartUseCase = new GetCartUseCase();
     this.updateQuantityUseCase = new UpdateQuantityUseCase();
     this.deleteItemUseCase = new DeleteItemUseCase();
+    this.applyCouponUseCase = new ApplyCouponUseCase();
   }
 
   addToCart = catchAsync(async (req, res, next) => {

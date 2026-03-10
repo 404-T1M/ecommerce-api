@@ -15,6 +15,14 @@ const paymentMethodSchema = new mongoose.Schema(
       },
     },
 
+    key: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
+
     description: {
       en: {
         type: String,

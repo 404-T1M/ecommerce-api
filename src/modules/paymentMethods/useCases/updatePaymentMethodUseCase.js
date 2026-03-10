@@ -22,7 +22,6 @@ class UpdatePaymentMethodUseCase {
 
     const updates = {};
 
-    // Handle multilingual name update
     if (body.nameEn || body.nameAr) {
       const newNameEn = body.nameEn ?? paymentMethod.name.en;
       const newNameAr = body.nameAr ?? paymentMethod.name.ar;
@@ -45,7 +44,6 @@ class UpdatePaymentMethodUseCase {
       };
     }
 
-    // Handle multilingual description update
     if (body.descriptionEn !== undefined || body.descriptionAr !== undefined) {
       updates.description = {
         en: body.descriptionEn ?? paymentMethod.description?.en ?? null,
@@ -77,7 +75,6 @@ class UpdatePaymentMethodUseCase {
         updates,
       );
 
-      // Delete old image from Cloudinary after successful update
       if (imageData && oldImageId) {
         await ImageService.delete(oldImageId);
       }
