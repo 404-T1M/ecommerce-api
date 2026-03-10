@@ -20,7 +20,9 @@ class ApplyCouponUseCase {
       await this.cartRepository.save(cart);
     }
 
-    const coupon = await this.couponRepository.findByCode(couponCode);
+    const coupon = await this.couponRepository.findOne({
+      code: couponCode.toUpperCase(),
+    });
     if (!coupon || !coupon.isActive) {
       throw new AppError("Invalid coupon code", 400);
     }

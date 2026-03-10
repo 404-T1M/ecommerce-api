@@ -4,7 +4,7 @@ class CartPricingService {
   static refreshPrices(cart) {
     let changed = false;
     for (const item of cart.items) {
-      const currentPrice = item.variant.finalPrice;
+      const currentPrice = item.variant.price.finalPrice;
       if (item.priceSnapshot !== currentPrice) {
         item.priceSnapshot = currentPrice;
         changed = true;
@@ -54,10 +54,13 @@ class CartPricingService {
     }
 
     if (coupon.applicableCategories.length > 0) {
+      const productCategory = item.variant.product.category;
+      const categoryId = productCategory?._id
+        ? productCategory._id.toString()
+        : productCategory?.toString();
       if (
-        !coupon.applicableCategories.some(
-          (id) => id.toString() === item.variant.product.category?.toString(),
-        )
+        !categoryId ||
+        !coupon.applicableCategories.some((id) => id.toString() === categoryId)
       ) {
         return false;
       }
@@ -67,10 +70,10 @@ class CartPricingService {
 
   static calculateDiscountedTotal(items, coupon) {
     let discount = 0;
+    const eligibleSubtotal = CartPricingService.calculateTotal(items);
 
     if (coupon.discountType === "percentage") {
-      discount =
-        (coupon.discountValue / 100) * CartPricingService.calculateTotal(items);
+      discount = (coupon.discountValue / 100) * eligibleSubtotal;
     } else if (coupon.discountType === "fixed") {
       discount = coupon.discountValue;
     }
@@ -78,6 +81,8 @@ class CartPricingService {
     if (coupon.maxDiscountAmount) {
       discount = Math.min(discount, coupon.maxDiscountAmount);
     }
+
+    discount = Math.min(discount, eligibleSubtotal);
     return discount;
   }
 }

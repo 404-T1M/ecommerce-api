@@ -68,6 +68,22 @@ class ProductVariantRepository {
     });
   }
 
+  async decrementStock(variantId, quantity) {
+    return await ProductVariant.findOneAndUpdate(
+      { _id: variantId, stock: { $gte: quantity } },
+      { $inc: { stock: -quantity } },
+      { new: true },
+    );
+  }
+
+  async incrementStock(variantId, quantity) {
+    return await ProductVariant.findByIdAndUpdate(
+      variantId,
+      { $inc: { stock: quantity } },
+      { new: true },
+    );
+  }
+
   async updateMany(filter, update) {
     return await ProductVariant.updateMany(filter, update, {
       new: true,
@@ -209,7 +225,7 @@ class ProductVariantRepository {
                   nameAr: "$attributes.nameSnapshot.ar",
                 },
                 values: { $addToSet: "$attributes.value" },
-                attributeId: { $first: "$attributes.attribute" }
+                attributeId: { $first: "$attributes.attribute" },
               },
             },
             {

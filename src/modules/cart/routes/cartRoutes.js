@@ -21,4 +21,8 @@ router.delete("/cart/delete", protect, (req, res, next) => {
   controller.deleteItem(req, res, next);
 });
 
+router.post("/cart/apply-coupon", protect, (req, res, next) => {
+  controller.applyCoupon(req, res, next);
+});
+
 module.exports = router;

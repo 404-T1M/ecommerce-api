@@ -16,6 +16,8 @@ const couponRoutes = require("./modules/coupons/routes/couponRoutes");
 const customerAddressesRoutes = require("./modules/customerAddresses/routes/customersAddressesRoutes");
 const shippingMethodRoutes = require("./modules/shippingMethods/routes/shippingMethodRoutes");
 const paymentMethodRoutes = require("./modules/paymentMethods/routes/paymentMethodRoutes");
+const orderRoutes = require("./modules/orders/routes/orderRoutes");
+const walletRoutes = require("./modules/customerWallet/routes/walletRoutes");
 
 connectDB();
 
@@ -30,6 +32,8 @@ app.use("/api/v1", cartRoutes);
 app.use("/api/v1", customerAddressesRoutes);
 app.use("/api/v1", shippingMethodRoutes);
 app.use("/api/v1", paymentMethodRoutes);
+app.use("/api/v1", orderRoutes);
+app.use("/api/v1", walletRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({ status: "ok" });
