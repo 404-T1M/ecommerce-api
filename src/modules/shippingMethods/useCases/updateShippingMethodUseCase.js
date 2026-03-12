@@ -22,21 +22,30 @@ class UpdateShippingMethodUseCase {
 
     const updates = {};
 
-    if (body.name) {
-      const existing = await this.shippingMethodRepo.findOne({
-        name: { $regex: `^${body.name}$`, $options: "i" },
-      });
-      if (existing && existing._id.toString() !== shippingMethodId) {
-        throw new AppError(
-          "A shipping method with this name already exists",
-          400,
-        );
+    if (body.nameEn || body.nameAr) {
+      const newNameEn = body.nameEn ?? shippingMethod.name.en;
+      const newNameAr = body.nameAr ?? shippingMethod.name.ar;
+
+      if (body.nameEn) {
+        const existing = await this.shippingMethodRepo.findOne({
+          "name.en": { $regex: `^${body.nameEn}$`, $options: "i" },
+        });
+        if (existing && existing._id.toString() !== shippingMethodId) {
+          throw new AppError(
+            "A shipping method with this name already exists",
+            400,
+          );
+        }
       }
-      updates.name = body.name;
+
+      updates.name = { en: newNameEn, ar: newNameAr };
     }
 
-    if (body.description !== undefined) {
-      updates.description = body.description;
+    if (body.descriptionEn !== undefined || body.descriptionAr !== undefined) {
+      updates.description = {
+        en: body.descriptionEn ?? shippingMethod.description?.en ?? null,
+        ar: body.descriptionAr ?? shippingMethod.description?.ar ?? null,
+      };
     }
 
     if (body.price != null) {
@@ -48,10 +57,7 @@ class UpdateShippingMethodUseCase {
 
     if (body.estimatedDeliveryDays != null) {
       if (body.estimatedDeliveryDays < 0) {
-        throw new AppError(
-          "Estimated delivery days must be 0 or greater",
-          400,
-        );
+        throw new AppError("Estimated delivery days must be 0 or greater", 400);
       }
       updates.estimatedDeliveryDays = body.estimatedDeliveryDays;
     }

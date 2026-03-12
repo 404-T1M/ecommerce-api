@@ -47,6 +47,8 @@ class UpdateQuantityUseCase {
     const savedItems = await this.cartRepo.save(cart, {
       populateProduct: true,
     });
+    // console.log(new CartResponseDTO(savedItems));
+    
     return new CartResponseDTO(savedItems);
   }
 }

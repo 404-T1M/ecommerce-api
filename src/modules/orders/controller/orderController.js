@@ -17,16 +17,14 @@ class OrderController {
     this.updateOrderStatusUseCase = new UpdateOrderStatusUseCase();
   }
 
-  placeOrder = catchAsync(async (req, res) => {
+  placeOrder = catchAsync(async (req, res, next) => {
     const loggedInUser = req.user;
-    const { addressId, shippingMethodId, paymentMethodId, couponCode } =
-      req.body;
+    const { addressId, shippingMethodId, paymentMethodId } = req.body;
 
     const order = await this.placeOrderUseCase.execute(loggedInUser, {
       addressId,
       shippingMethodId,
       paymentMethodId,
-      couponCode,
     });
 
     res.status(201).json({
@@ -35,7 +33,7 @@ class OrderController {
     });
   });
 
-  getMyOrders = catchAsync(async (req, res) => {
+  getMyOrders = catchAsync(async (req, res, next) => {
     const loggedInUser = req.user;
     const { page = 1, limit = 10 } = req.query;
 
@@ -52,7 +50,7 @@ class OrderController {
     });
   });
 
-  getOrderById = catchAsync(async (req, res) => {
+  getOrderById = catchAsync(async (req, res, next) => {
     const loggedInUser = req.user;
     const { id } = req.params;
 
@@ -64,7 +62,7 @@ class OrderController {
     });
   });
 
-  cancelOrder = catchAsync(async (req, res) => {
+  cancelOrder = catchAsync(async (req, res, next) => {
     const loggedInUser = req.user;
     const { id } = req.params;
 
@@ -76,7 +74,7 @@ class OrderController {
     });
   });
 
-  getAllOrders = catchAsync(async (req, res) => {
+  getAllOrders = catchAsync(async (req, res, next) => {
     const { status, paymentStatus, page = 1, limit = 10 } = req.query;
 
     const result = await this.getAllOrdersUseCase.execute(req.user, {
@@ -93,7 +91,7 @@ class OrderController {
     });
   });
 
-  updateOrderStatus = catchAsync(async (req, res) => {
+  updateOrderStatus = catchAsync(async (req, res, next) => {
     const { id } = req.params;
     const { status } = req.body;
 

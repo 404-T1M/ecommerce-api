@@ -21,7 +21,7 @@ class GetAllOrdersUseCase {
   }
 
   async execute(adminUser, { status, paymentStatus, page = 1, limit = 10 }) {
-    await assertAdminPermission(adminUser, "orders.read");
+    await assertAdminPermission(adminUser, "orders.list");
 
     const filter = {};
     if (status) {

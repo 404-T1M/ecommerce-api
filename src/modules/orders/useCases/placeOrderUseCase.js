@@ -26,12 +26,14 @@ class PlaceOrderUseCase {
 
   async execute(
     loggedInUser,
-    { addressId, shippingMethodId, paymentMethodId, couponCode },
+    { addressId, shippingMethodId, paymentMethodId },
   ) {
     const cart = await this.cartRepository.findByUser(loggedInUser.id);
     if (!cart || cart.items.length === 0) {
       throw new AppError("Your cart is empty", 400);
     }
+
+    const couponCode = cart.coupon?.code ?? null;
 
     const pricesChanged = CartPricingService.refreshPrices(cart);
     if (pricesChanged) await this.cartRepository.save(cart);

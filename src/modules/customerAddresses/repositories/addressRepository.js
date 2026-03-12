@@ -10,8 +10,8 @@ class AddressRepository {
     return await query;
   }
 
-  async create(variant) {
-    return await ProductVariant.create(variant);
+  async create(address) {
+    return await Address.create(address);
   }
 
   async find(filter, sort, page, limit, options = {}) {

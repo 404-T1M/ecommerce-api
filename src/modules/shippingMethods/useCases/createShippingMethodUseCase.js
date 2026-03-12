@@ -13,10 +13,21 @@ class CreateShippingMethodUseCase {
   async execute(loggedInUser, body, imageFile) {
     await assertAdminPermission(loggedInUser, "shippingMethods.create");
 
-    const { name, description, price, estimatedDeliveryDays, isActive } = body;
+    const {
+      nameEn,
+      nameAr,
+      descriptionEn,
+      descriptionAr,
+      price,
+      estimatedDeliveryDays,
+      isActive,
+    } = body;
 
-    if (!name || price == null) {
-      throw new AppError("Name and Price are required", 400);
+    if (!nameEn || !nameAr || price == null) {
+      throw new AppError(
+        "Name in both English and Arabic, and Price are required",
+        400,
+      );
     }
 
     if (price < 0) {
@@ -28,10 +39,13 @@ class CreateShippingMethodUseCase {
     }
 
     const existing = await this.shippingMethodRepo.findOne({
-      name: { $regex: `^${name}$`, $options: "i" },
+      "name.en": { $regex: `^${nameEn}$`, $options: "i" },
     });
     if (existing) {
-      throw new AppError("A shipping method with this name already exists", 400);
+      throw new AppError(
+        "A shipping method with this name already exists",
+        400,
+      );
     }
 
     let imageData = null;
@@ -44,8 +58,8 @@ class CreateShippingMethodUseCase {
       }
 
       const shippingMethod = await this.shippingMethodRepo.create({
-        name,
-        description,
+        name: { en: nameEn, ar: nameAr },
+        description: { en: descriptionEn ?? null, ar: descriptionAr ?? null },
         price,
         estimatedDeliveryDays,
         isActive: isActive ?? true,

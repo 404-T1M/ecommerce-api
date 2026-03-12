@@ -3,15 +3,27 @@ const mongoose = require("mongoose");
 const shippingMethodSchema = new mongoose.Schema(
   {
     name: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
+      en: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      ar: {
+        type: String,
+        required: true,
+        trim: true,
+      },
     },
 
     description: {
-      type: String,
-      trim: true,
+      en: {
+        type: String,
+        trim: true,
+      },
+      ar: {
+        type: String,
+        trim: true,
+      },
     },
 
     price: {

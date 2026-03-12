@@ -48,11 +48,29 @@ class ApplyCouponUseCase {
       coupon,
     );
 
-    return {
+    cart.coupon = { code: coupon.code };
+    await this.cartRepository.save(cart);
+
+    const hasRestrictions =
+      coupon.applicableProducts.length > 0 ||
+      coupon.applicableCategories.length > 0;
+
+    const result = {
       subtotal: cartTotal,
       discount,
       total: Math.max(0, cartTotal - discount),
     };
+
+    if (hasRestrictions) {
+      result.eligibleItems = allowedItems.map((item) => ({
+        variantId: item.variant._id,
+        productName: item.variant.product.name,
+        price: item.priceSnapshot,
+        quantity: item.quantity,
+      }));
+    }
+
+    return result;
   }
 }
 
