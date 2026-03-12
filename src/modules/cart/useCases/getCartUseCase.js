@@ -8,7 +8,6 @@ class GetCartUseCase {
 
   async execute(loggedInUser) {
     const cart = await this.cartRepo.findByUser(loggedInUser.id);
-    console.log(cart.items);
 
     if (!cart) {
       return null;

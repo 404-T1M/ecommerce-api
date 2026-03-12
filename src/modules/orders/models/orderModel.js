@@ -104,13 +104,12 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-orderSchema.pre("save", function (next) {
+orderSchema.pre("save", function () {
   if (!this.orderNumber) {
     const ts = Date.now().toString(36).toUpperCase();
     const rand = Math.floor(Math.random() * 9000 + 1000);
     this.orderNumber = `ORD-${ts}-${rand}`;
   }
-  next();
 });
 
 module.exports = mongoose.model("Order", orderSchema);

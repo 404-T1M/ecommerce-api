@@ -16,7 +16,7 @@ class AddAddressUseCase {
       customer,
       country,
       governorate,
-      mobilePhone: recipientMobilePhone,
+      recipientMobilePhone,
       address,
       recipientName,
       isPrimary,

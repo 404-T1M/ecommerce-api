@@ -26,6 +26,10 @@ const cartSchema = mongoose.Schema(
         },
       },
     ],
+
+    coupon: {
+      code: { type: String, trim: true, uppercase: true },
+    },
   },
   { timestamps: true },
 );

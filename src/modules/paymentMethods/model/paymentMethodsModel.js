@@ -21,6 +21,10 @@ const paymentMethodSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       lowercase: true,
+      enum: {
+        values: ["cod", "wallet"],
+        message: "Invalid key. Supported keys are: cod, wallet",
+      },
     },
 
     description: {

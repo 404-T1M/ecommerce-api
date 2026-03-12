@@ -22,10 +22,10 @@ class CartRepository {
     if (options.populateProduct) {
       await savedCart.populate({
         path: "items.variant",
-        select: "price image product",
+        select: "price image product stock published isDeleted",
         populate: {
           path: "product",
-          select: "name",
+          select: "name published isDeleted category",
         },
       });
     }

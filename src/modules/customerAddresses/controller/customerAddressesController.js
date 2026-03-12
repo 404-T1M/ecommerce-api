@@ -7,7 +7,7 @@ const DeleteAddressUseCase = require("../useCases/deleteAddressUseCase");
 
 class AddressController {
   constructor() {
-    this.updateAddressUseCase = new AddAddressUseCase();
+    this.addAddressUseCase = new AddAddressUseCase();
     this.listAllCustomerAddressesUseCase = new GetAllCustomerAddressesUseCase();
     this.listAllAddressesUseCase = new ListAllAddressesUseCase();
     this.updateAddressUseCase = new UpdateAddressUseCase();
@@ -18,7 +18,7 @@ class AddressController {
     const loggedInUser = req.user;
     const body = req.body;
 
-    const Address = await this.updateAddressUseCase.execute(loggedInUser, body);
+    const Address = await this.addAddressUseCase.execute(loggedInUser, body);
 
     res.status(201).json({
       message: "Address Added Successfully",
