@@ -1,13 +1,18 @@
 const AppError = require("../../../core/errors/appError");
 const ReviewRepository = require("../repositories/reviewRepository");
 const { syncProductRating } = require("../../../shared/services/ratingService");
+const {
+  assertAdminPermission,
+} = require("../../../core/authorization/checkAdminAndHisPermission");
 
 class AdminUpdateReviewStatusUseCase {
   constructor() {
     this.reviewRepository = new ReviewRepository();
   }
 
-  async execute(reviewId, published) {
+  async execute(adminUser, reviewId, published) {
+    await assertAdminPermission(adminUser, "orderReviews.update");
+
     const review = await this.reviewRepository.findOne({ _id: reviewId });
 
     if (!review) {

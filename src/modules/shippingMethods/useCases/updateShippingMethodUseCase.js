@@ -59,6 +59,18 @@ class UpdateShippingMethodUseCase {
         }
       }
 
+      if (body.nameAr) {
+        const existing = await this.shippingMethodRepo.findOne({
+          "name.ar": { $regex: `^${body.nameAr}$`, $options: "i" },
+        });
+        if (existing && existing._id.toString() !== shippingMethodId) {
+          throw new AppError(
+            "A shipping method with this name already exists",
+            400,
+          );
+        }
+      }
+
       updates.name = { en: newNameEn, ar: newNameAr };
     }
 
@@ -117,6 +129,11 @@ class UpdateShippingMethodUseCase {
       if (imageData?.publicId) {
         await ImageService.delete(imageData.publicId);
       }
+
+      if (error?.code === 11000) {
+        throw new AppError("A shipping method with this name already exists", 400);
+      }
+
       throw error;
     }
   }
