@@ -7,7 +7,7 @@ const DeleteCouponUseCase = require("../useCases/deleteCouponUseCase");
 
 class AttributeController {
   constructor() {
-    this.updateCouponUseCase = new CreateCouponUseCase();
+    this.createCouponUseCase = new CreateCouponUseCase();
     this.getAllCouponsUseCase = new GetAllCouponsUseCase();
     this.getCouponUseCase = new GetCouponUseCase();
     this.updateCouponUseCase = new UpdateCouponUseCase();
@@ -18,7 +18,7 @@ class AttributeController {
     const loggedInUser = req.user;
     const body = req.body;
 
-    const coupon = await this.updateCouponUseCase.execute(loggedInUser, body);
+    const coupon = await this.createCouponUseCase.execute(loggedInUser, body);
 
     res.status(201).json({
       message: "Coupon Created Successfully",

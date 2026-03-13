@@ -90,6 +90,12 @@ const productSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    rating: {
+      avg: { type: Number, default: 0 },
+      count: { type: Number, default: 0 },
+      total: { type: Number, default: 0 },
+    },
   },
   { timestamps: true },
 );

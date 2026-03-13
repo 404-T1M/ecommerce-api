@@ -18,11 +18,11 @@ class AddressController {
     const loggedInUser = req.user;
     const body = req.body;
 
-    const Address = await this.addAddressUseCase.execute(loggedInUser, body);
+    const address = await this.addAddressUseCase.execute(loggedInUser, body);
 
     res.status(201).json({
       message: "Address Added Successfully",
-      Address,
+      address,
     });
   });
 

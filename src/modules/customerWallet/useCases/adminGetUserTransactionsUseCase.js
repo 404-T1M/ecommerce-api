@@ -12,7 +12,7 @@ class AdminGetUserTransactionsUseCase {
   }
 
   async execute(adminUser, userId, { type, page = 1, limit = 10 }) {
-    await assertAdminPermission(adminUser, "wallet.list");
+    await assertAdminPermission(adminUser, "customerWallet.list");
 
     const user = await this.userRepository.findOne({
       _id: userId,

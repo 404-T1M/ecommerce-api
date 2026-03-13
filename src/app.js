@@ -18,6 +18,7 @@ const shippingMethodRoutes = require("./modules/shippingMethods/routes/shippingM
 const paymentMethodRoutes = require("./modules/paymentMethods/routes/paymentMethodRoutes");
 const orderRoutes = require("./modules/orders/routes/orderRoutes");
 const walletRoutes = require("./modules/customerWallet/routes/walletRoutes");
+const reviewRoutes = require("./modules/orderReviews/routes/reviewRoutes");
 
 connectDB();
 
@@ -34,6 +35,7 @@ app.use("/api/v1", shippingMethodRoutes);
 app.use("/api/v1", paymentMethodRoutes);
 app.use("/api/v1", orderRoutes);
 app.use("/api/v1", walletRoutes);
+app.use("/api/v1", reviewRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({ status: "ok" });

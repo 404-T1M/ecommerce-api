@@ -6,12 +6,19 @@ class OrderResponseDTO {
     this.orderNumber = order.orderNumber;
     this.status = order.status;
     this.paymentStatus = order.paymentStatus;
-    this.customer = {
-      id: order.user._id,
-      name: order.user.name,
-      email: order.user.email,
-      mobilePhone: order.user.mobilePhone,
-    };
+    const user = order.user;
+    if (user && typeof user === "object" && (user._id || user.name || user.email || user.mobilePhone)) {
+      this.customer = {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        mobilePhone: user.mobilePhone,
+      };
+    } else if (user) {
+      this.customer = { id: user };
+    } else {
+      this.customer = null;
+    }
 
     this.items = order.items.map((item) => ({
       variantId: item.variant,
