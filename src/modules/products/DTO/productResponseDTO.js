@@ -16,7 +16,12 @@ class ProductResponseDTO {
 
     this.category = product.category;
     this.attributes = product.attributes;
-    this.price = product.minPrice !== undefined ? product.minPrice : (product.price ? product.price.finalPrice : null);
+    this.price =
+      product.minPrice !== undefined
+        ? product.minPrice
+        : product.price
+          ? product.price.finalPrice
+          : null;
     this.discountPrice = product.discountPrice;
     this.published = product.published;
     this.sku = product.sku;
@@ -25,7 +30,7 @@ class ProductResponseDTO {
       this.createdBy = {
         _id: product.createdBy._id,
         name: product.createdBy.name,
-        email: product.createdBy.email
+        email: product.createdBy.email,
       };
     } else if (product.createdBy) {
       this.createdBy = product.createdBy;
@@ -40,9 +45,14 @@ class ProductResponseDTO {
         _id: cheapest._id,
         price: cheapest.price,
         image: cheapest.image,
-        attributes: cheapest.attributes
+        attributes: cheapest.attributes,
       };
     }
+    this.rating = {
+      avg: product.rating?.avg ?? 0,
+      count: product.rating?.count ?? 0,
+      total: product.rating?.total ?? 0,
+    };
     this.createdAt = product.createdAt;
   }
 }

@@ -41,7 +41,7 @@ class CartController {
     );
 
     res.status(201).json({
-      message: "Item Updated At Cart Successfully",
+      message: "Item updated in cart successfully",
       cart,
     });
   });

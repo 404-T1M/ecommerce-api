@@ -1,6 +1,8 @@
 const Order = require("../models/orderModel");
 
-const ORDER_POPULATE = [{ path: "user", select: "name email mobilePhone" }];
+const CUSTOMER_POPULATE = [{ path: "user", select: "name email mobilePhone" }];
+
+const ITEMS_POPULATE = [{ path: "items.variant", select: "product" }];
 
 class OrderRepository {
   async create(orderData) {
@@ -8,12 +10,12 @@ class OrderRepository {
   }
 
   async findById(id) {
-    return await Order.findById(id).populate(ORDER_POPULATE);
+    return await Order.findById(id).populate(CUSTOMER_POPULATE);
   }
 
   async findByIdAndUser(id, userId) {
     return await Order.findOne({ _id: id, user: userId }).populate(
-      ORDER_POPULATE,
+      CUSTOMER_POPULATE,
     );
   }
 
@@ -24,7 +26,7 @@ class OrderRepository {
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .populate(ORDER_POPULATE),
+        .populate(CUSTOMER_POPULATE),
       Order.countDocuments({ user: userId }),
     ]);
     return { orders, total };
@@ -37,7 +39,8 @@ class OrderRepository {
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .populate(ORDER_POPULATE),
+        .populate(CUSTOMER_POPULATE)
+        .populate(ITEMS_POPULATE),
       Order.countDocuments(filter),
     ]);
     return { orders, total };
@@ -48,7 +51,7 @@ class OrderRepository {
       id,
       { status },
       { new: true, runValidators: true },
-    ).populate(ORDER_POPULATE);
+    ).populate(CUSTOMER_POPULATE);
   }
 
   async save(order) {

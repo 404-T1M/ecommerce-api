@@ -23,8 +23,29 @@ class UpdateShippingMethodUseCase {
     const updates = {};
 
     if (body.nameEn || body.nameAr) {
-      const newNameEn = body.nameEn ?? shippingMethod.name.en;
-      const newNameAr = body.nameAr ?? shippingMethod.name.ar;
+      let existingNameEn;
+      let existingNameAr;
+
+      if (typeof shippingMethod.name === "string") {
+        existingNameEn = shippingMethod.name;
+        existingNameAr = shippingMethod.name;
+      } else if (
+        shippingMethod.name &&
+        typeof shippingMethod.name === "object"
+      ) {
+        existingNameEn = shippingMethod.name.en;
+        existingNameAr = shippingMethod.name.ar;
+      }
+
+      const newNameEn = body.nameEn ?? existingNameEn;
+      const newNameAr = body.nameAr ?? existingNameAr;
+
+      if (newNameEn == null || newNameAr == null) {
+        throw new AppError(
+          "Both English and Arabic names must be provided or resolvable from existing data",
+          400,
+        );
+      }
 
       if (body.nameEn) {
         const existing = await this.shippingMethodRepo.findOne({

@@ -56,4 +56,7 @@ const shippingMethodSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+shippingMethodSchema.index({ "name.en": 1 }, { unique: true });
+shippingMethodSchema.index({ "name.ar": 1 }, { unique: true });
+
 module.exports = mongoose.model("ShippingMethod", shippingMethodSchema);
