@@ -3,7 +3,10 @@ const ReviewRepository = require("../repositories/reviewRepository");
 const EmailService = require("../../../shared/services/emailService");
 const { syncProductRating } = require("../../../shared/services/ratingService");
 const {
-  deleteReviewTemplate,
+  assertAdminPermission,
+} = require("../../../core/authorization/checkAdminAndHisPermission");
+const {
+  deletedReviewTemplate,
 } = require("../../../shared/services/templates/deletedReviewTemplate");
 
 class AdminDeleteReviewUseCase {
@@ -12,7 +15,9 @@ class AdminDeleteReviewUseCase {
     this.emailService = new EmailService();
   }
 
-  async execute(reviewId, reason) {
+  async execute(adminUser, reviewId, reason) {
+    await assertAdminPermission(adminUser, "orderReviews.delete");
+
     const review = await this.reviewRepository.findOne({ _id: reviewId });
 
     if (!review) {
@@ -34,7 +39,7 @@ class AdminDeleteReviewUseCase {
       await this.emailService.sendEmail(
         userEmail,
         "Your review has been removed",
-        deleteReviewTemplate(userName, reviewRating, reviewComment, reason),
+        deletedReviewTemplate(userName, reviewRating, reviewComment, reason),
       );
     }
   }

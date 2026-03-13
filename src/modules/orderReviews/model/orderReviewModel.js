@@ -43,5 +43,6 @@ const orderReviewSchema = new mongoose.Schema(
 );
 
 orderReviewSchema.index({ user: 1, product: 1 }, { unique: true });
+orderReviewSchema.index({ product: 1, published: 1 });
 
 module.exports = mongoose.model("OrderReview", orderReviewSchema);

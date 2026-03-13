@@ -88,6 +88,7 @@ class ReviewController {
     const { published, page = 1, limit = 10 } = req.query;
 
     const result = await this.adminGetReviewsUseCase.execute(
+      req.user,
       published,
       Number(page),
       Number(limit),
@@ -109,6 +110,7 @@ class ReviewController {
     }
 
     const review = await this.adminUpdateReviewStatusUseCase.execute(
+      req.user,
       id,
       published,
     );
@@ -127,7 +129,7 @@ class ReviewController {
       return next(new AppError("Deletion reason is required", 400));
     }
 
-    await this.adminDeleteReviewUseCase.execute(id, reason);
+    await this.adminDeleteReviewUseCase.execute(req.user, id, reason);
 
     res
       .status(200)

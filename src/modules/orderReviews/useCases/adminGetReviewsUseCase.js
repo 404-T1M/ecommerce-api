@@ -1,11 +1,16 @@
 const ReviewRepository = require("../repositories/reviewRepository");
+const {
+  assertAdminPermission,
+} = require("../../../core/authorization/checkAdminAndHisPermission");
 
 class AdminGetReviewsUseCase {
   constructor() {
     this.reviewRepository = new ReviewRepository();
   }
 
-  async execute(published, page = 1, limit = 10) {
+  async execute(adminUser, published, page = 1, limit = 10) {
+    await assertAdminPermission(adminUser, "orderReviews.list");
+
     const filter = {};
 
     if (published === "true") filter.published = true;

@@ -45,6 +45,13 @@ const adminGroupSchema = new mongoose.Schema(
           "orders.delete",
           "orders.view",
 
+          "orderReviews.list",
+          "orderReviews.update",
+          "orderReviews.delete",
+
+          "wallet.list",
+          "wallet.credit",
+
           "coupons.list",
           "coupons.create",
           "coupons.update",
