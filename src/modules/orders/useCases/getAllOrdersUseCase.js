@@ -20,7 +20,7 @@ class GetAllOrdersUseCase {
     this.orderRepository = new OrderRepository();
   }
 
-  async execute(adminUser, { status, paymentStatus, page = 1, limit = 10 }) {
+  async execute(adminUser, { status, paymentStatus, orderNumber, page = 1, limit = 10, sort: sortParam }) {
     await assertAdminPermission(adminUser, "orders.list");
 
     const filter = {};
@@ -40,7 +40,19 @@ class GetAllOrdersUseCase {
       filter.paymentStatus = paymentStatus;
     }
 
-    return await this.orderRepository.find(filter, page, limit);
+    if (orderNumber) {
+      filter.orderNumber = { $regex: orderNumber, $options: "i" };
+    }
+
+    const sortMap = {
+      newest: { createdAt: -1 },
+      oldest: { createdAt: 1 },
+      total_asc: { totalAmount: 1 },
+      total_desc: { totalAmount: -1 },
+    };
+    const sort = sortMap[sortParam] || { createdAt: -1 };
+
+    return await this.orderRepository.find(filter, Number(page), Number(limit), sort);
   }
 }
 

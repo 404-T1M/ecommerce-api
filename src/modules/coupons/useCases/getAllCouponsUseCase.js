@@ -14,21 +14,31 @@ class GetAllCouponUseCase {
 
     let query = {};
 
-    if (filter.isActive != null) {
-      query.isActive = filter.isActive;
+    if (filter.isActive != null && filter.isActive !== "") {
+      query.isActive = filter.isActive === "true" || filter.isActive === true;
     }
     if (filter.code) {
       query.code = { $regex: filter.code, $options: "i" };
     }
 
-    const coupons = await this.couponRepo.find(
-      query,
-      filter.sort,
-      filter.page,
-      filter.limit,
-      { populateUsers: true },
-    );
-    return coupons.map((coupon) => new CouponResponseDTO(coupon));
+    const page = Number(filter.page) || 1;
+    const limit = Number(filter.limit) || 10;
+    const sort = filter.sort || { createdAt: -1 };
+
+    const [coupons, total] = await Promise.all([
+      this.couponRepo.find(query, sort, page, limit, { populateUsers: true }),
+      this.couponRepo.count(query),
+    ]);
+
+    return {
+      coupons: coupons.map((coupon) => new CouponResponseDTO(coupon)),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
   }
 }
 module.exports = GetAllCouponUseCase;

@@ -19,11 +19,11 @@ class OrderRepository {
     );
   }
 
-  async findByUser(userId, page = 1, limit = 10) {
+  async findByUser(userId, page = 1, limit = 10, sort = { createdAt: -1 }) {
     const skip = (page - 1) * limit;
     const [orders, total] = await Promise.all([
       Order.find({ user: userId })
-        .sort({ createdAt: -1 })
+        .sort(sort)
         .skip(skip)
         .limit(limit)
         .populate(CUSTOMER_POPULATE),
@@ -32,11 +32,11 @@ class OrderRepository {
     return { orders, total };
   }
 
-  async find(filter = {}, page = 1, limit = 10) {
+  async find(filter = {}, page = 1, limit = 10, sort = { createdAt: -1 }) {
     const skip = (page - 1) * limit;
     const [orders, total] = await Promise.all([
       Order.find(filter)
-        .sort({ createdAt: -1 })
+        .sort(sort)
         .skip(skip)
         .limit(limit)
         .populate(CUSTOMER_POPULATE)

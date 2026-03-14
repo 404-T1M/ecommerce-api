@@ -5,11 +5,21 @@ class GetUserOrdersUseCase {
     this.orderRepository = new OrderRepository();
   }
 
-  async execute(loggedInUser, page = 1, limit = 10) {
-    const { orders, total } = await this.orderRepository.findByUser(
-      loggedInUser.id,
-      page,
-      limit,
+  async execute(loggedInUser, { page = 1, limit = 10, sort: sortParam, status }) {
+    const filter = { user: loggedInUser.id };
+    if (status) filter.status = status;
+
+    const sortMap = {
+      newest: { createdAt: -1 },
+      oldest: { createdAt: 1 },
+    };
+    const sort = sortMap[sortParam] || { createdAt: -1 };
+
+    const { orders, total } = await this.orderRepository.find(
+      filter,
+      Number(page),
+      Number(limit),
+      sort
     );
 
     return {

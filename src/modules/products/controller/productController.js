@@ -73,7 +73,7 @@ class ProductController {
       filter,
     );
     res.status(200).json({
-      products: result.data,
+      products: result.products,
       meta: result.meta,
     });
   });

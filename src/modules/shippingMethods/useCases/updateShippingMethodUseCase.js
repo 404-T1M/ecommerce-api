@@ -5,6 +5,9 @@ const {
   assertAdminPermission,
 } = require("../../../core/authorization/checkAdminAndHisPermission");
 
+const ENGLISH_NAME_COLLATION = { locale: "en", strength: 2 };
+const ARABIC_NAME_COLLATION = { locale: "ar", strength: 2 };
+
 class UpdateShippingMethodUseCase {
   constructor() {
     this.shippingMethodRepo = new ShippingMethodRepository();
@@ -48,9 +51,10 @@ class UpdateShippingMethodUseCase {
       }
 
       if (body.nameEn) {
-        const existing = await this.shippingMethodRepo.findOne({
-          "name.en": { $regex: `^${body.nameEn}$`, $options: "i" },
-        });
+        const existing = await this.shippingMethodRepo.findOne(
+          { "name.en": body.nameEn },
+          { collation: ENGLISH_NAME_COLLATION },
+        );
         if (existing && existing._id.toString() !== shippingMethodId) {
           throw new AppError(
             "A shipping method with this name already exists",
@@ -60,9 +64,10 @@ class UpdateShippingMethodUseCase {
       }
 
       if (body.nameAr) {
-        const existing = await this.shippingMethodRepo.findOne({
-          "name.ar": { $regex: `^${body.nameAr}$`, $options: "i" },
-        });
+        const existing = await this.shippingMethodRepo.findOne(
+          { "name.ar": body.nameAr },
+          { collation: ARABIC_NAME_COLLATION },
+        );
         if (existing && existing._id.toString() !== shippingMethodId) {
           throw new AppError(
             "A shipping method with this name already exists",

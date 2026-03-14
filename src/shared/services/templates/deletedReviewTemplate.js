@@ -13,6 +13,10 @@ exports.deletedReviewTemplate = (
   reason,
 ) => {
   const safeUserName = escapeHtml(userName);
+  const normalizedReviewRating = Number(reviewRating);
+  const safeReviewRating = Number.isFinite(normalizedReviewRating)
+    ? normalizedReviewRating
+    : "N/A";
   const safeReviewComment = escapeHtml(reviewComment);
   const safeReason = escapeHtml(reason);
 
@@ -23,7 +27,7 @@ exports.deletedReviewTemplate = (
 
           <h3>Your original review:</h3>
           <blockquote style="border-left: 4px solid #ccc; padding-left: 16px; color: #555;">
-            <p><strong>Rating:</strong> ${reviewRating}/5</p>
+            <p><strong>Rating:</strong> ${safeReviewRating}/5</p>
             <p><strong>Comment:</strong> ${safeReviewComment}</p>
           </blockquote>
 
