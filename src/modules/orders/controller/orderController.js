@@ -39,8 +39,7 @@ class OrderController {
 
     const result = await this.getUserOrdersUseCase.execute(
       loggedInUser,
-      Number(page),
-      Number(limit),
+      req.query
     );
 
     res.status(200).json({
@@ -77,12 +76,7 @@ class OrderController {
   getAllOrders = catchAsync(async (req, res, next) => {
     const { status, paymentStatus, page = 1, limit = 10 } = req.query;
 
-    const result = await this.getAllOrdersUseCase.execute(req.user, {
-      status,
-      paymentStatus,
-      page: Number(page),
-      limit: Number(limit),
-    });
+    const result = await this.getAllOrdersUseCase.execute(req.user, req.query);
 
     res.status(200).json({
       message: "Success",

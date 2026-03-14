@@ -16,12 +16,12 @@ class ListAllCategoriesUseCase {
 
     const query = {};
 
-    if (filter.published !== undefined) {
-      query.published = filter.published;
+    if (filter.published !== undefined && filter.published !== "") {
+      query.published = filter.published === "true" || filter.published === true;
     }
 
-    if (filter.isDeleted !== undefined) {
-      query.isDeleted = filter.isDeleted;
+    if (filter.isDeleted !== undefined && filter.isDeleted !== "") {
+      query.isDeleted = filter.isDeleted === "true" || filter.isDeleted === true;
     }
 
     if (filter.name) {
@@ -41,10 +41,21 @@ class ListAllCategoriesUseCase {
       if (filter.toDate) query.createdAt.$lte = new Date(filter.toDate);
     }
 
+    const sortMap = {
+      name_asc: { "name.en": 1 },
+      name_desc: { "name.en": -1 },
+      newest: { createdAt: -1 },
+      oldest: { createdAt: 1 },
+    };
+    const sort = sortMap[filter.sort] || { createdAt: -1 };
+
+    const pagination = {
+      page: Number(filter.page) || 1,
+      limit: Number(filter.limit) || 10,
+    };
+
     const [categories, total] = await Promise.all([
-      this.categoryRepo.find(query, {
-        page: filter.page,
-        limit: filter.limit,
+      this.categoryRepo.find(query, pagination, sort, {
         populateParent: true,
         populateCreatedBy: true,
         populateAttributes: true,
@@ -53,12 +64,12 @@ class ListAllCategoriesUseCase {
     ]);
 
     return {
-      data: categories.map((category) => new CategoryDataResponseDTO(category)),
+      categories: categories.map((category) => new CategoryDataResponseDTO(category)),
       meta: {
         total,
-        page: filter.page,
-        limit: filter.limit,
-        totalPages: Math.ceil(total / filter.limit),
+        page: pagination.page,
+        limit: pagination.limit,
+        totalPages: Math.ceil(total / pagination.limit),
       },
     };
   }

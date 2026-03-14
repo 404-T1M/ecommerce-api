@@ -12,18 +12,29 @@ class adminListUsersUseCase {
   }
   async execute(loggedInUser, filter) {
     await assertAdminPermission(loggedInUser, "users.list");
+    const query = { ...filter };
+    query.page = Number(filter.page) || 1;
+    query.limit = Number(filter.limit) || 10;
+
+    const sortMap = {
+      name_asc: { name: 1 },
+      name_desc: { name: -1 },
+      newest: { createdAt: -1 },
+      oldest: { createdAt: 1 },
+    };
+    query.sort = sortMap[filter.sort] || { createdAt: -1 };
 
     const [users, total] = await Promise.all([
-      this.userRepo.find(filter),
-      this.userRepo.count(filter),
+      this.userRepo.find(query),
+      this.userRepo.count(query),
     ]);
     return {
-      data: users.map((userItem) => new ListUserResponseDTO(userItem)),
+      users: users.map((userItem) => new ListUserResponseDTO(userItem)),
       meta: {
         total,
-        page: filter.page,
-        limit: filter.limit,
-        totalPages: Math.ceil(total / filter.limit),
+        page: query.page,
+        limit: query.limit,
+        totalPages: Math.ceil(total / query.limit),
       },
     };
   }

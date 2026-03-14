@@ -107,7 +107,7 @@ class ListAllProductsUseCase {
     );
 
     return {
-      data: data.map((item) => new productResponseDTO(item)),
+      products: data.map((item) => new productResponseDTO(item)),
       meta: {
         total,
         page: pagination.page,

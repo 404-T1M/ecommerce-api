@@ -27,7 +27,7 @@ class ListAdminGroupsUseCase {
     ]);
 
     return {
-      data: adminGroups.map((group) => new adminGroupResponseDTO(group)),
+      adminGroups: adminGroups.map((group) => new adminGroupResponseDTO(group)),
       meta: {
         total,
         page: pagination.page,

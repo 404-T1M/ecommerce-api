@@ -5,6 +5,9 @@ const {
   assertAdminPermission,
 } = require("../../../core/authorization/checkAdminAndHisPermission");
 
+const ENGLISH_NAME_COLLATION = { locale: "en", strength: 2 };
+const ARABIC_NAME_COLLATION = { locale: "ar", strength: 2 };
+
 class CreateShippingMethodUseCase {
   constructor() {
     this.shippingMethodRepo = new ShippingMethodRepository();
@@ -38,10 +41,18 @@ class CreateShippingMethodUseCase {
       throw new AppError("Estimated delivery days must be 0 or greater", 400);
     }
 
-    const existing = await this.shippingMethodRepo.findOne({
-      "name.en": { $regex: `^${nameEn}$`, $options: "i" },
-    });
-    if (existing) {
+    const [existingEnglishName, existingArabicName] = await Promise.all([
+      this.shippingMethodRepo.findOne(
+        { "name.en": nameEn },
+        { collation: ENGLISH_NAME_COLLATION },
+      ),
+      this.shippingMethodRepo.findOne(
+        { "name.ar": nameAr },
+        { collation: ARABIC_NAME_COLLATION },
+      ),
+    ]);
+
+    if (existingEnglishName || existingArabicName) {
       throw new AppError(
         "A shipping method with this name already exists",
         400,

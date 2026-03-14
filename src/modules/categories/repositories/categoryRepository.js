@@ -14,8 +14,8 @@ class categoryRepository {
     return ids;
   }
 
-  async find(filters, options = {}) {
-    let query = Category.find(filters);
+  async find(filters, pagination = {}, sort = { createdAt: -1 }, options = {}) {
+    let query = Category.find(filters).sort(sort);
 
     if (options.populateParent) {
       query = query.populate("parent", "name slug");
@@ -29,10 +29,10 @@ class categoryRepository {
       query = query.populate("attributes.attribute", "_id name type");
     }
 
-    if (options.page && options.limit) {
+    if (pagination.page && pagination.limit) {
       query = query
-        .skip((options.page - 1) * options.limit)
-        .limit(options.limit);
+        .skip((pagination.page - 1) * pagination.limit)
+        .limit(pagination.limit);
     }
 
     return query;

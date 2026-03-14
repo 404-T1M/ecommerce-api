@@ -10,6 +10,20 @@ const DeleteReviewUseCase = require("../useCases/deleteReviewUseCase");
 const ReviewResponseDTO = require("../DTO/reviewResponseDTO");
 const ProductReviewsDTO = require("../DTO/productReviewsDTO");
 
+const parseReviewRating = (rating) => {
+  const normalizedRating = Number(rating);
+
+  if (
+    !Number.isFinite(normalizedRating) ||
+    normalizedRating < 1 ||
+    normalizedRating > 5
+  ) {
+    throw new AppError("Rating must be a number between 1 and 5", 400);
+  }
+
+  return normalizedRating;
+};
+
 class ReviewController {
   constructor() {
     this.addReviewUseCase = new AddReviewUseCase();
@@ -25,15 +39,17 @@ class ReviewController {
     const { productId } = req.params;
     const { rating, comment } = req.body;
 
-    if (!rating || !comment) {
+    if (rating === undefined || !comment?.trim()) {
       return next(new AppError("Rating and comment are required", 400));
     }
+
+    const normalizedRating = parseReviewRating(rating);
 
     const review = await this.addReviewUseCase.execute(
       req.user?.id,
       productId,
       {
-        rating: Number(rating),
+        rating: normalizedRating,
         comment,
       },
     );
@@ -49,8 +65,12 @@ class ReviewController {
     const { id } = req.params;
     const { rating, comment } = req.body;
 
+    if (comment !== undefined && !comment?.trim()) {
+      return next(new AppError("Comment must not be empty", 400));
+    }
+
     const review = await this.updateReviewUseCase.execute(req.user.id, id, {
-      rating: rating !== undefined ? Number(rating) : undefined,
+      rating: rating !== undefined ? parseReviewRating(rating) : undefined,
       comment,
     });
 

@@ -34,12 +34,15 @@ class ListAdminShippingMethodsUseCase {
     ]);
 
     return {
-      total,
-      page,
-      limit,
       shippingMethods: shippingMethods.map(
         (sm) => new ShippingMethodResponseDTO(sm),
       ),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
     };
   }
 }

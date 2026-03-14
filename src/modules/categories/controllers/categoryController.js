@@ -53,7 +53,7 @@ class CategoryController {
       filter,
     );
     res.status(200).json({
-      Categories: result.data,
+      categories: result.categories,
       meta: result.meta,
     });
   });
@@ -72,7 +72,7 @@ class CategoryController {
       filter,
     );
     res.status(200).json({
-      categories: result.data,
+      categories: result.categories,
       meta: result.meta,
     });
   });

@@ -38,7 +38,7 @@ class administratorsGroupController {
       filter,
     );
     res.status(200).json({
-      adminGroups: result.data,
+      adminGroups: result.adminGroups,
       meta: result.meta,
     });
   });
@@ -54,7 +54,7 @@ class administratorsGroupController {
     );
     res.status(200).json({
       message: "Admin Group Updating Successfully",
-      adminGroups: result.data,
+      adminGroups: result,
     });
   });
 

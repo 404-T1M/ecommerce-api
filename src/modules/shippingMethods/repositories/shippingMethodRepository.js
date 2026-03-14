@@ -8,6 +8,10 @@ class ShippingMethodRepository {
   async findOne(filter, options = {}) {
     let query = ShippingMethod.findOne(filter);
 
+    if (options.collation) {
+      query = query.collation(options.collation);
+    }
+
     if (options.populateCreatedBy) {
       query = query.populate("createdBy", "name email profileImage");
     }

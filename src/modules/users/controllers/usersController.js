@@ -93,7 +93,7 @@ class UsersController {
     };
     const result = await this.listUsersUseCase.execute(user, filter);
     res.status(200).json({
-      users: result.data,
+      users: result.users,
       meta: result.meta,
     });
   });
@@ -159,7 +159,7 @@ class UsersController {
     };
     const result = await this.listUsersUseCase.execute(user, filter);
     res.status(200).json({
-      users: result.data,
+      users: result.users,
       meta: result.meta,
     });
   });

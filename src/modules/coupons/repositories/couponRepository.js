@@ -22,7 +22,7 @@ class CouponRepository {
     return query;
   }
 
-  async find(filter, sort, page, limit, options = {}) {
+  async find(filter, sort = { createdAt: -1 }, page = 1, limit = 10, options = {}) {
     let query = Coupon.find(filter).sort(sort);
 
     if (options.populateUsers) {
@@ -30,6 +30,10 @@ class CouponRepository {
     }
 
     return await query.skip((page - 1) * limit).limit(limit);
+  }
+
+  async count(filter) {
+    return await Coupon.countDocuments(filter);
   }
 
   async updateOne(filter, updates) {
