@@ -17,7 +17,6 @@ class BannerController {
   addBanner = catchAsync(async (req, res, next) => {
     const loggedInUser = req.user;
     const body = req.body;
-    console.log(req.file);
     const imageFile = req.file;
 
     const banner = await this.createBannerUseCase.execute(
@@ -36,6 +35,9 @@ class BannerController {
     const loggedInUser = req.user;
     const filter = {
       isActive: req.query.isActive,
+      page: req.query.page,
+      limit: req.query.limit,
+      sort: req.query.sort,
     };
 
     const result = await this.listAllBannersUseCase.execute(

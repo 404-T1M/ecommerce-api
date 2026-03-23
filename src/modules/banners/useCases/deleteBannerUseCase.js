@@ -18,7 +18,7 @@ class DeleteBannerUseCase {
       throw new AppError("Banner Not Found", 404);
     }
 
-    await this.bannerRepo.delete(banner);
+    await this.bannerRepo.delete({ _id: bannerId });
     if (banner.image?.fileName) {
       await ImageService.delete(banner.image.fileName);
     }

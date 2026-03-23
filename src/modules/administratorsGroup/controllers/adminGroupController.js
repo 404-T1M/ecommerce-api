@@ -2,6 +2,7 @@ const AddAdminGroupUseCase = require("../useCases/createAdminGroup");
 const ListAdminGroupsUseCase = require("../useCases/listAdminGroupsUseCase");
 const UpdateAdminGroupUseCase = require("../useCases/updateAdminGroupUseCase");
 const DeleteAdminGroupUseCase = require("../useCases/deleteAdminGroupUseCase");
+const ListAllPermissionsUseCase = require("../useCases/listAllPermissionsUseCase");
 const catchAsync = require("../../../shared/utils/catchAsync");
 
 class administratorsGroupController {
@@ -10,7 +11,16 @@ class administratorsGroupController {
     this.listAdminGroupsUseCase = new ListAdminGroupsUseCase();
     this.updateAdminGroupUseCase = new UpdateAdminGroupUseCase();
     this.deleteAdminGroupUseCase = new DeleteAdminGroupUseCase();
+    this.listAllPermissionsUseCase = new ListAllPermissionsUseCase();
   }
+
+  listAllPermissions = catchAsync(async (req, res, next) => {
+    const loggedInUser = req.user;
+    const result = await this.listAllPermissionsUseCase.execute(loggedInUser);
+    res.status(200).json({
+      permissions: result.permissions,
+    });
+  });
 
   addAdminGroup = catchAsync(async (req, res, next) => {
     const loggedInUser = req.user;
@@ -54,7 +64,7 @@ class administratorsGroupController {
     );
     res.status(200).json({
       message: "Admin Group Updating Successfully",
-      adminGroups: result,
+      adminGroup: result,
     });
   });
 

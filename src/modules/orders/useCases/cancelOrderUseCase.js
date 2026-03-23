@@ -1,6 +1,7 @@
 const AppError = require("../../../core/errors/appError");
 const OrderRepository = require("../repositories/orderRepository");
 const ProductVariantRepository = require("../../products/repositories/productVariantRepository");
+const ProductRepository = require("../../products/repositories/productRepository");
 const RefundWalletUseCase = require("../../customerWallet/useCases/refundWalletUseCase");
 
 const CANCELLABLE_STATUSES = ["pending", "confirmed"];
@@ -9,6 +10,7 @@ class CancelOrderUseCase {
   constructor() {
     this.orderRepository = new OrderRepository();
     this.variantRepository = new ProductVariantRepository();
+    this.productRepository = new ProductRepository();
     this.refundWalletUseCase = new RefundWalletUseCase();
   }
 
@@ -31,8 +33,23 @@ class CancelOrderUseCase {
 
     order.status = "cancelled";
 
+    const soldCountByProduct = new Map();
     for (const item of order.items) {
-      await this.variantRepository.incrementStock(item.variant, item.quantity);
+      const variantId = item.variant?._id ?? item.variant;
+      await this.variantRepository.incrementStock(variantId, item.quantity);
+
+      const productId = item.variant?.product?._id ?? item.variant?.product;
+      if (productId) {
+        const key = String(productId);
+        soldCountByProduct.set(key, (soldCountByProduct.get(key) ?? 0) + item.quantity);
+      }
+    }
+
+    for (const [productId, qty] of soldCountByProduct.entries()) {
+      await this.productRepository.updateOne(
+        { _id: productId },
+        { $inc: { soldCount: -qty } },
+      );
     }
 
     if (

@@ -91,6 +91,11 @@ const productSchema = mongoose.Schema(
       default: false,
     },
 
+    soldCount: {
+      type: Number,
+      default: 0,
+    },
+
     rating: {
       avg: { type: Number, default: 0 },
       count: { type: Number, default: 0 },

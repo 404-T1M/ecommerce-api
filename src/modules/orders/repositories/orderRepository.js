@@ -16,7 +16,7 @@ class OrderRepository {
   async findByIdAndUser(id, userId) {
     return await Order.findOne({ _id: id, user: userId }).populate(
       CUSTOMER_POPULATE,
-    );
+    ).populate(ITEMS_POPULATE);
   }
 
   async findByUser(userId, page = 1, limit = 10, sort = { createdAt: -1 }) {

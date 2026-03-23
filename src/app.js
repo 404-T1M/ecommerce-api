@@ -20,6 +20,7 @@ const orderRoutes = require("./modules/orders/routes/orderRoutes");
 const walletRoutes = require("./modules/customerWallet/routes/walletRoutes");
 const reviewRoutes = require("./modules/orderReviews/routes/reviewRoutes");
 const bannerRoutes = require("./modules/banners/routes/bannerRoutes");
+const sectionRoutes = require("./modules/sections/routes/sectionRoutes");
 
 connectDB();
 
@@ -38,6 +39,7 @@ app.use("/api/v1", orderRoutes);
 app.use("/api/v1", walletRoutes);
 app.use("/api/v1", reviewRoutes);
 app.use("/api/v1", bannerRoutes);
+app.use("/api/v1", sectionRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({ status: "ok" });

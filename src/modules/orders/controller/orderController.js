@@ -35,11 +35,10 @@ class OrderController {
 
   getMyOrders = catchAsync(async (req, res, next) => {
     const loggedInUser = req.user;
-    const { page = 1, limit = 10 } = req.query;
 
     const result = await this.getUserOrdersUseCase.execute(
       loggedInUser,
-      req.query
+      req.query,
     );
 
     res.status(200).json({
@@ -74,8 +73,6 @@ class OrderController {
   });
 
   getAllOrders = catchAsync(async (req, res, next) => {
-    const { status, paymentStatus, page = 1, limit = 10 } = req.query;
-
     const result = await this.getAllOrdersUseCase.execute(req.user, req.query);
 
     res.status(200).json({
