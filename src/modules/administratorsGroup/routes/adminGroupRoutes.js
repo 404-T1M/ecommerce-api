@@ -6,6 +6,15 @@ const { restrictTo } = require("../../../middleware/roleMiddleware");
 const router = express.Router();
 const controller = new adminGroupController();
 
+router.get(
+  "/all-permissions",
+  protect,
+  restrictTo("admin"),
+  (req, res, next) => {
+    controller.listAllPermissions(req, res, next);
+  },
+);
+
 router.post(
   "/add-admin-group",
   protect,

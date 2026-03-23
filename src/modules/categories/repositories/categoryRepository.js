@@ -14,8 +14,40 @@ class categoryRepository {
     return ids;
   }
 
-  async find(filters, pagination = {}, sort = { createdAt: -1 }, options = {}) {
-    let query = Category.find(filters).sort(sort);
+  async find(
+    filters,
+    paginationOrProjection = {},
+    sort = { createdAt: -1 },
+    options = {},
+  ) {
+    // We support 2 styles in the 2nd param:
+    // 1) pagination: { page, limit }
+    // 2) projection: { _id: 1, name: 1 }
+    const isPagination =
+      paginationOrProjection &&
+      (paginationOrProjection.page !== undefined ||
+        paginationOrProjection.limit !== undefined);
+
+    let query;
+
+    if (isPagination) {
+      const page = Number(paginationOrProjection.page) || 1;
+      const limit = Number(paginationOrProjection.limit) || 10;
+
+      query = Category.find(filters)
+        .sort(sort)
+        .skip((page - 1) * limit)
+        .limit(limit);
+    } else {
+      const projection =
+        paginationOrProjection && Object.keys(paginationOrProjection).length > 0
+          ? paginationOrProjection
+          : null;
+
+      query = projection
+        ? Category.find(filters, projection).sort(sort)
+        : Category.find(filters).sort(sort);
+    }
 
     if (options.populateParent) {
       query = query.populate("parent", "name slug");
@@ -27,12 +59,6 @@ class categoryRepository {
 
     if (options.populateAttributes) {
       query = query.populate("attributes.attribute", "_id name type");
-    }
-
-    if (pagination.page && pagination.limit) {
-      query = query
-        .skip((pagination.page - 1) * pagination.limit)
-        .limit(pagination.limit);
     }
 
     return query;

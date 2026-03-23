@@ -9,6 +9,9 @@ class GetUserOrdersUseCase {
     const filter = { user: loggedInUser.id };
     if (status) filter.status = status;
 
+    const pageNum = Math.max(1, Number(page) || 1);
+    const limitNum = Math.max(1, Number(limit) || 10);
+
     const sortMap = {
       newest: { createdAt: -1 },
       oldest: { createdAt: 1 },
@@ -17,18 +20,18 @@ class GetUserOrdersUseCase {
 
     const { orders, total } = await this.orderRepository.find(
       filter,
-      Number(page),
-      Number(limit),
-      sort
+      pageNum,
+      limitNum,
+      sort,
     );
 
     return {
       orders,
       pagination: {
         total,
-        page,
-        limit,
-        pages: Math.ceil(total / limit),
+        page: pageNum,
+        limit: limitNum,
+        pages: Math.ceil(total / limitNum),
       },
     };
   }

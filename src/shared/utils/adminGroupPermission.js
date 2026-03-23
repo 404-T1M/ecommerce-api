@@ -1,16 +1,6 @@
-const mongoose = require("mongoose");
-
-const adminGroupSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-
-    permissions: [
-      {
-        type: String,
-        enum: [
+class AdminGroupPermission {
+    async getAllPermissions() {
+        return [
           "customers.list",
           "customers.create",
           "customers.update",
@@ -93,17 +83,8 @@ const adminGroupSchema = new mongoose.Schema(
           "reports.earnings",
           "reports.orders",
           "reports.customers",
-        ],
-      },
-    ],
-  },
-  {
-    timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
-  },
-);
+        ]
+    }
+}
 
-adminGroupSchema.index({ name: 1 }, { unique: true });
-
-module.exports = mongoose.model("AdminGroup", adminGroupSchema);
+module.exports = new AdminGroupPermission();

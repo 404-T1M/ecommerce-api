@@ -18,7 +18,7 @@ class GetBannerUseCase {
       throw new AppError("Banner Not Found", 404);
     }
 
-    return BannerResponseDTO(banner);
+    return new BannerResponseDTO(banner);
   }
 }
 

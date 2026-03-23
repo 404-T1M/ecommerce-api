@@ -21,6 +21,27 @@ class UpdateBannerUseCase {
 
     let oldImagePublicId = banner.image?.fileName;
     let newImageData = null;
+    let savedBanner = false;
+
+    let normalizedOrder;
+    if (body.order !== undefined && body.order !== "") {
+      normalizedOrder = Number(body.order);
+      if (!Number.isFinite(normalizedOrder)) {
+        throw new AppError("Invalid order value", 400);
+      }
+    }
+
+    let normalizedIsActive;
+    if (body.isActive !== undefined && body.isActive !== "") {
+      if (body.isActive === true || body.isActive === "true") {
+        normalizedIsActive = true;
+      } else if (body.isActive === false || body.isActive === "false") {
+        normalizedIsActive = false;
+      } else {
+        throw new AppError("Invalid isActive value", 400);
+      }
+    }
+
     try {
       if (imageFile) {
         newImageData = await ImageService.uploadSingle({
@@ -44,23 +65,30 @@ class UpdateBannerUseCase {
       if (body.link !== undefined) {
         banner.link = body.link;
       }
-      if (body.order !== undefined) {
-        banner.order = body.order;
+      if (normalizedOrder !== undefined) {
+        banner.order = normalizedOrder;
       }
-      if (body.isActive !== undefined) {
-        banner.isActive = body.isActive;
+      if (normalizedIsActive !== undefined) {
+        banner.isActive = normalizedIsActive;
       }
       banner.updatedBy = loggedInUser.id;
       await banner.save();
+      savedBanner = true;
 
       if (newImageData && oldImagePublicId) {
-        await ImageService.delete(oldImagePublicId);
+        try {
+          await ImageService.delete(oldImagePublicId);
+        } catch (cleanupError) {
+        }
       }
 
       return new BannerResponseDTO(banner);
     } catch (error) {
-      if (newImageData?.publicId) {
+      if (!savedBanner && newImageData?.publicId) {
         await ImageService.delete(newImageData.publicId);
+      }
+      if (error instanceof AppError) {
+        throw error;
       }
       throw new AppError(error.message, 500);
     }

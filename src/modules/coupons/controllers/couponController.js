@@ -53,12 +53,13 @@ class AttributeController {
       sort: req.query.sort,
     };
 
-    const coupons = await this.getAllCouponsUseCase.execute(
+    const result = await this.getAllCouponsUseCase.execute(
       loggedInUser,
       filter,
     );
     res.status(200).json({
-      coupons,
+      coupons: result.coupons,
+      meta: result.meta,
     });
   });
 

@@ -6,6 +6,7 @@ const AddressRepository = require("../../customerAddresses/repositories/addressR
 const ShippingMethodRepository = require("../../shippingMethods/repositories/shippingMethodRepository");
 const PaymentMethodRepository = require("../../paymentMethods/repositories/paymentMethodRepository");
 const ProductVariantRepository = require("../../products/repositories/productVariantRepository");
+const ProductRepository = require("../../products/repositories/productRepository");
 const WalletRepository = require("../../customerWallet/repositories/walletRepository");
 const CartPricingService = require("../../../shared/services/cartService");
 const Coupon = require("../../coupons/models/couponModel");
@@ -19,6 +20,7 @@ class PlaceOrderUseCase {
     this.addressRepository = new AddressRepository();
     this.shippingMethodRepository = new ShippingMethodRepository();
     this.paymentMethodRepository = new PaymentMethodRepository();
+    this.productRepository = new ProductRepository();
     this.variantRepository = new ProductVariantRepository();
     this.walletRepository = new WalletRepository();
     this.debitWalletUseCase = new DebitWalletUseCase();
@@ -177,7 +179,6 @@ class PlaceOrderUseCase {
         : undefined,
       pricing: { subtotal, discount, shipping: shippingCost, total },
     });
-
     const decrementedItems = [];
     for (const item of cart.items) {
       const updated = await this.variantRepository.decrementStock(
@@ -199,6 +200,20 @@ class PlaceOrderUseCase {
         quantity: item.quantity,
       });
     }
+    const soldCountByProduct = new Map();
+    for (const item of cart.items) {
+      const productId = item.variant.product?._id ?? item.variant.product;
+      if (productId) {
+        const key = String(productId);
+        soldCountByProduct.set(key, (soldCountByProduct.get(key) ?? 0) + item.quantity);
+      }
+    }
+    for (const [productId, qty] of soldCountByProduct.entries()) {
+      await this.productRepository.updateOne(
+        { _id: productId },
+        { $inc: { soldCount: qty } },
+      );
+    }
 
     if (isWalletPayment) {
       try {
@@ -216,6 +231,12 @@ class PlaceOrderUseCase {
       } catch (err) {
         for (const d of decrementedItems)
           await this.variantRepository.incrementStock(d.variantId, d.quantity);
+        for (const [productId, qty] of soldCountByProduct.entries()) {
+          await this.productRepository.updateOne(
+            { _id: productId },
+            { $inc: { soldCount: -qty } },
+          );
+        }
         order.status = "cancelled";
         await this.orderRepository.save(order);
         throw err;

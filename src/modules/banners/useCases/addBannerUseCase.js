@@ -12,12 +12,29 @@ class AddBannerUseCase {
 
   async execute(loggedInUser, body, imageFile) {
     await assertAdminPermission(loggedInUser, "banners.create");
-    console.log("AddBannerUseCase body:", body);
-    console.log("AddBannerUseCase file:", imageFile);
     const { titleEn, titleAr, order, link, isActive } = body;
 
     if (!titleEn || !titleAr) {
       throw new AppError("Title in both English and Arabic is required", 400);
+    }
+
+    let normalizedOrder;
+    if (order !== undefined && order !== "") {
+      normalizedOrder = Number(order);
+      if (!Number.isFinite(normalizedOrder)) {
+        throw new AppError("Invalid order value", 400);
+      }
+    }
+
+    let normalizedIsActive;
+    if (isActive !== undefined && isActive !== "") {
+      if (isActive === true || isActive === "true") {
+        normalizedIsActive = true;
+      } else if (isActive === false || isActive === "false") {
+        normalizedIsActive = false;
+      } else {
+        throw new AppError("Invalid isActive value", 400);
+      }
     }
 
     let imageData = null;
@@ -38,14 +55,19 @@ class AddBannerUseCase {
               size: imageData.size,
             }
           : null,
-        order,
-        isActive: isActive !== undefined ? isActive : true,
+        ...(normalizedOrder !== undefined ? { order: normalizedOrder } : {}),
+        isActive: normalizedIsActive !== undefined ? normalizedIsActive : true,
         createdBy: loggedInUser.id,
       });
 
       return new BannerResponseDTO(banner);
     } catch (error) {
-      await ImageService.delete(imageData.publicId);
+      if (imageData?.publicId) {
+        await ImageService.delete(imageData.publicId);
+      }
+      if (error instanceof AppError) {
+        throw error;
+      }
       throw new AppError("Image upload failed: " + error.message, 500);
     }
   }
