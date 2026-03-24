@@ -12,7 +12,15 @@ class GetCouponsStatesUseCase {
   async execute(loggedInUser, queryParams) {
     await assertAdminPermission(loggedInUser, "reports.coupons");
 
+    const allowedSortFields = ["usedCount", "totalDiscount"];
     const sortField = queryParams.sortBy || "usedCount";
+    if (!allowedSortFields.includes(sortField)) {
+      throw new AppError(
+        `Invalid sortBy value: ${sortField}. Allowed values: ${allowedSortFields.join(", ")}`,
+        400,
+      );
+    }
+
     const sortOrder = queryParams.sortOrder === "asc" ? 1 : -1;
     const page = parseInt(queryParams.page, 10) || 1;
     const limit = parseInt(queryParams.limit, 10) || 10;
@@ -21,7 +29,7 @@ class GetCouponsStatesUseCase {
       sortField,
       sortOrder,
       page,
-      limit
+      limit,
     );
   }
 }

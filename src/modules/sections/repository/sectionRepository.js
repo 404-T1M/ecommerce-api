@@ -9,7 +9,9 @@ class SectionRepository {
     let query = Section.find(filter).sort(sort);
 
     if (options.page && options.limit) {
-      query = query.skip((options.page - 1) * options.limit).limit(options.limit);
+      query = query
+        .skip((options.page - 1) * options.limit)
+        .limit(options.limit);
     }
 
     if (options.populateCreatedBy) {
@@ -47,14 +49,17 @@ class SectionRepository {
   async checkValidData(repo, ids, filter) {
     if (!Array.isArray(ids) || ids.length === 0) return [];
 
-    const documents = await repo.find(
-      { _id: { $in: ids }, ...filter },
-      { _id: 1 }
+    const results = await Promise.all(
+      ids.map((id) => repo.findOne({ _id: id, ...filter })),
     );
 
-    const existingIdSet = new Set(documents.map((doc) => String(doc._id)));
+    const validIds = [];
+    ids.forEach((id, index) => {
+      if (results[index]) {
+        validIds.push(id);
+      }
+    });
 
-    const validIds = ids.filter((id) => existingIdSet.has(String(id)));
     return validIds;
   }
 }
