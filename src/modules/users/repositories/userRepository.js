@@ -8,6 +8,10 @@ class userRepository {
       query.role = filters.role;
     }
 
+    if (filters.adminGroup) {
+      query.adminGroup = filters.adminGroup;
+    }
+
     if (filters.status !== undefined && filters.status !== "") {
       query.status = filters.status;
     }

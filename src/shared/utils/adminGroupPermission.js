@@ -80,9 +80,12 @@ class AdminGroupPermission {
           "settings.view",
           "settings.update",
 
-          "reports.earnings",
-          "reports.orders",
+          "reports.overview",
+          "reports.coupons",
+          "reports.products",
           "reports.customers",
+          "reports.daily",
+          "reports.profit",
         ]
     }
 }

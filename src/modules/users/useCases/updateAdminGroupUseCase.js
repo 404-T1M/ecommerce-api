@@ -19,7 +19,7 @@ class updateAdminUseCase {
     }
 
     const adminGroup = await this.adminGroupRepo.findOne({
-      _id: body.adminGroup,
+      _id: body,
     });
     if (!adminGroup) {
       throw new AppError("Admin Group Not Founded", 404);
