@@ -162,9 +162,12 @@ class UpdateSectionUseCase {
           categoryIds,
           productIds,
         },
-        order: body.order ?? section.order,
-        limit: body.limit ?? section.limit,
-        isActive: body.isActive ?? section.isActive,
+        order: body.order !== undefined ? Number(body.order) : section.order,
+        limit: body.limit !== undefined ? Number(body.limit) : section.limit,
+        isActive:
+          body.isActive !== undefined
+            ? Boolean(body.isActive === "true" || body.isActive === true)
+            : section.isActive,
       },
     );
 
