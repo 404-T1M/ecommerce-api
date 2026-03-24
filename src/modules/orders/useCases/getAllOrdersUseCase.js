@@ -58,7 +58,23 @@ class GetAllOrdersUseCase {
     };
     const sort = sortMap[sortParam] || { createdAt: -1 };
 
-    return await this.orderRepository.find(filter, pageNum, limitNum, sort);
+    const { orders, total } = await this.orderRepository.find(
+      filter,
+      pageNum,
+      limitNum,
+      sort,
+    );
+
+    return {
+      orders,
+      total,
+      meta: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+      },
+    };
   }
 }
 
