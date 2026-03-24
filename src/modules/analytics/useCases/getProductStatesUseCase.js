@@ -12,7 +12,15 @@ class GetProductStatesUseCase {
   async execute(loggedInUser, queryParams) {
     await assertAdminPermission(loggedInUser, "reports.products");
 
+    const allowedSortFields = ["soldCount", "revenue"];
     const sortField = queryParams.sortBy || "soldCount";
+    if (!allowedSortFields.includes(sortField)) {
+      throw new AppError(
+        `Invalid sortBy value: ${sortField}. Allowed values: ${allowedSortFields.join(", ")}`,
+        400,
+      );
+    }
+
     const sortOrder = queryParams.sortOrder === "asc" ? 1 : -1;
     const page = parseInt(queryParams.page, 10) || 1;
     const limit = parseInt(queryParams.limit, 10) || 10;
@@ -21,7 +29,7 @@ class GetProductStatesUseCase {
       sortField,
       sortOrder,
       page,
-      limit
+      limit,
     );
   }
 }

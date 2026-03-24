@@ -30,10 +30,7 @@ class AnalyticsRepository {
           revenue: { $sum: "$pricing.total" },
           profit: {
             $sum: {
-              $subtract: [
-                "$pricing.total",
-                { $add: ["$pricing.shipping", "$pricing.discount"] },
-              ],
+              $subtract: ["$pricing.total", "$pricing.shipping"],
             },
           },
         },
@@ -69,10 +66,7 @@ class AnalyticsRepository {
           totalRevenue: { $sum: "$pricing.total" },
           totalProfit: {
             $sum: {
-              $subtract: [
-                "$pricing.total",
-                { $add: ["$pricing.shipping", "$pricing.discount"] },
-              ],
+              $subtract: ["$pricing.total", "$pricing.shipping"],
             },
           },
         },
@@ -97,7 +91,7 @@ class AnalyticsRepository {
     sortField = "completedOrders",
     sortOrder = -1,
     page = 1,
-    limit = 10
+    limit = 10,
   ) {
     const ACTIVE_STATUSES = ["pending", "confirmed", "processing", "shipped"];
     const skip = (page - 1) * limit;
@@ -125,7 +119,9 @@ class AnalyticsRepository {
             $sum: { $cond: [{ $eq: ["$status", "cancelled"] }, 1, 0] },
           },
           totalSpent: {
-            $sum: { $cond: [{ $eq: ["$status", "delivered"] }, "$pricing.total", 0] },
+            $sum: {
+              $cond: [{ $eq: ["$status", "delivered"] }, "$pricing.total", 0],
+            },
           },
         },
       },
@@ -170,7 +166,7 @@ class AnalyticsRepository {
     sortField = "soldCount",
     sortOrder = -1,
     page = 1,
-    limit = 10
+    limit = 10,
   ) {
     const skip = (page - 1) * limit;
 
@@ -224,7 +220,6 @@ class AnalyticsRepository {
           },
           soldCount: { $sum: "$items.quantity" },
           revenue: { $sum: "$items.total" },
-          profit: { $sum: "$items.total" },
         },
       },
       { $match: { _id: { $ne: "unknown_product" } } },
@@ -245,7 +240,6 @@ class AnalyticsRepository {
           image: { $arrayElemAt: ["$productDoc.images", 0] },
           soldCount: 1,
           revenue: 1,
-          profit: 1,
         },
       },
       { $sort: { [sortField]: sortOrder } },
@@ -270,7 +264,7 @@ class AnalyticsRepository {
     sortField = "usedCount",
     sortOrder = -1,
     page = 1,
-    limit = 10
+    limit = 10,
   ) {
     const skip = (page - 1) * limit;
 
