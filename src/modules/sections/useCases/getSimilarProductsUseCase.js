@@ -29,6 +29,7 @@ class GetSimilarProductsUseCase {
     const similarProducts = await this.productRepo.find(
       {
         category: product.category,
+        _id: { $ne: productId },
         published: true,
         isDeleted: false,
       },

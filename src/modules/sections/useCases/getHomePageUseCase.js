@@ -91,6 +91,8 @@ class GetHomePageUseCase {
           const existProductsWithOffers = await this.productRepo.find(
             {
               "discountPrice.active": true,
+              published: true,
+              isDeleted: false,
             },
             { page: 1, limit: section.limit },
             {},
@@ -104,7 +106,7 @@ class GetHomePageUseCase {
 
         case "newArrivals":
           const existNewArrivals = await this.productRepo.find(
-            {},
+            { published: true, isDeleted: false },
             { page: 1, limit: section.limit },
             { createdAt: -1 },
           );
@@ -117,7 +119,7 @@ class GetHomePageUseCase {
 
         case "topRatedProducts":
           const existTopRatedProducts = await this.productRepo.find(
-            {},
+            { published: true, isDeleted: false },
             { page: 1, limit: section.limit },
             { "rating.avg": -1 },
           );
@@ -139,7 +141,7 @@ class GetHomePageUseCase {
 
         case "mostSellingProducts":
           const existMostSellingProducts = await this.productRepo.find(
-            {},
+            { published: true, isDeleted: false },
             { page: 1, limit: section.limit },
             { soldCount: -1 },
           );

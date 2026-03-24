@@ -83,11 +83,11 @@ class AddSectionUseCase {
             400,
           );
         }
-        const exists = await this.bannerRepo.findOne({
+        const heroBannerCount = await this.bannerRepo.count({
           _id: { $in: data.bannerIds },
           isActive: true,
         });
-        if (!exists) {
+        if (heroBannerCount !== data.bannerIds.length) {
           throw new AppError(
             "One or more banners in bannerIds do not exist or not active",
             400,
@@ -166,7 +166,10 @@ class AddSectionUseCase {
       data: { bannerIds, categoryIds, productIds },
       order,
       limit: body.limit || 10,
-      isActive: body.isActive != undefined ? body.isActive : true,
+      isActive:
+        body.isActive !== undefined
+          ? Boolean(body.isActive === "true" || body.isActive === true)
+          : true,
       createdBy: loggedInUser._id,
     });
 

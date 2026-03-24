@@ -47,11 +47,14 @@ class SectionRepository {
   async checkValidData(repo, ids, filter) {
     if (!Array.isArray(ids) || ids.length === 0) return [];
 
-    const validIds = [];
-    for (const id of ids) {
-      const exists = await repo.findOne({ _id: id, ...filter });
-      if (exists) validIds.push(id);
-    }
+    const documents = await repo.find(
+      { _id: { $in: ids }, ...filter },
+      { _id: 1 }
+    );
+
+    const existingIdSet = new Set(documents.map((doc) => String(doc._id)));
+
+    const validIds = ids.filter((id) => existingIdSet.has(String(id)));
     return validIds;
   }
 }

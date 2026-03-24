@@ -4,6 +4,7 @@ const {
 } = require("../../../core/authorization/checkAdminAndHisPermission");
 const OrderRepository = require("../repositories/orderRepository");
 const ProductVariantRepository = require("../../products/repositories/productVariantRepository");
+const ProductRepository = require("../../products/repositories/productRepository");
 const RefundWalletUseCase = require("../../customerWallet/useCases/refundWalletUseCase");
 
 const VALID_STATUSES = [
@@ -28,6 +29,7 @@ class UpdateOrderStatusUseCase {
   constructor() {
     this.orderRepository = new OrderRepository();
     this.variantRepository = new ProductVariantRepository();
+    this.productRepository = new ProductRepository();
     this.refundWalletUseCase = new RefundWalletUseCase();
   }
 
@@ -58,6 +60,27 @@ class UpdateOrderStatusUseCase {
         await this.variantRepository.incrementStock(
           item.variant,
           item.quantity,
+        );
+      }
+
+      const soldCountByProduct = new Map();
+      for (const item of order.items) {
+        const variantDoc = await this.variantRepository.findOne({
+          _id: item.variant,
+        });
+        if (variantDoc?.product) {
+          const productId = String(variantDoc.product);
+          soldCountByProduct.set(
+            productId,
+            (soldCountByProduct.get(productId) ?? 0) + item.quantity,
+          );
+        }
+      }
+
+      for (const [productId, qty] of soldCountByProduct.entries()) {
+        await this.productRepository.updateOne(
+          { _id: productId },
+          { $inc: { soldCount: -qty } },
         );
       }
 
