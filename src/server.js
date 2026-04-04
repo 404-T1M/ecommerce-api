@@ -3,8 +3,10 @@ const app = require("./app");
 const startDiscountCron = require("./cron/discountCron");
 const startCouponCron = require("./cron/couponDiscount");
 
-app.listen(5000, () => {
-  console.log("server running on port 5000");
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`server running on port ${PORT}`);
   startDiscountCron();
   startCouponCron();
 });
