@@ -1,5 +1,4 @@
 const express = require("express");
-const connectDB = require("./config/database");
 const globalError = require("./core/errors/globalErrors");
 const app = express();
 app.use(express.json());
@@ -22,8 +21,6 @@ const reviewRoutes = require("./modules/orderReviews/routes/reviewRoutes");
 const bannerRoutes = require("./modules/banners/routes/bannerRoutes");
 const sectionRoutes = require("./modules/sections/routes/sectionRoutes");
 const analyticsRoutes = require("./modules/analytics/routes/analyticsRoutes");
-
-connectDB();
 
 app.use("/api/v1", usersRoutes);
 app.use("/api/v1/admin", adminGroupRoutes);
