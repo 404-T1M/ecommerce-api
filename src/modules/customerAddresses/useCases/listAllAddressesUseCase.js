@@ -43,7 +43,7 @@ class ListAllAddressesUseCase {
         count,
         page: filter.page,
         limit: filter.limit,
-        totalPages: Math.ceil(total / filter.limit),
+        totalPages: Math.ceil(count / filter.limit),
       },
     };
   }
