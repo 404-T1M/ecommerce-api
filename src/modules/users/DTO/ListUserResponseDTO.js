@@ -1,3 +1,4 @@
+const { buildImageUrl } = require("../../../shared/utils/imageUrlBuilder");
 class ListUserResponseDTO {
   constructor(user) {
     this.id = user._id;
@@ -6,7 +7,7 @@ class ListUserResponseDTO {
     this.mobilePhone = user.mobilePhone;
     this.role = user.role;
     this.adminGroup = user.adminGroup;
-    this.profileImage = user.image
+    this.profileImage = user.profileImage
       ? {
           fileName: user.profileImage.fileName,
           imageSize: user.profileImage.size,

@@ -13,6 +13,7 @@ const AddAdminUseCase = require("../useCases/addAdminUseCase");
 const UpdateAdminGroupUseCase = require("../useCases/updateAdminGroupUseCase");
 const DeleteAdminUseCase = require("../useCases/deleteAdminUseCase");
 const GetMeUseCase = require("../useCases/getMeUseCase");
+const ChangeInfoUseCase = require("../useCases/ChangeInfoUseCase");
 const catchAsync = require("../../../shared/utils/catchAsync");
 
 class UsersController {
@@ -32,6 +33,7 @@ class UsersController {
     this.updateAdminGroupUseCase = new UpdateAdminGroupUseCase();
     this.deleteAdminUseCase = new DeleteAdminUseCase();
     this.getMeUseCase = new GetMeUseCase();
+    this.changeInfoUseCase = new ChangeInfoUseCase();
   }
 
   register = catchAsync(async (req, res, next) => {
@@ -113,6 +115,17 @@ class UsersController {
 
     const result = await this.getMeUseCase.execute(user);
     res.status(200).json({
+      user: result,
+    });
+  });
+
+  updateMyInfo = catchAsync(async (req, res, next) => {
+    const loggedInUser = req.user;
+    const data = req.body;
+    const image = req.file;
+    const result = await this.changeInfoUseCase.execute(loggedInUser, data, image);
+    res.status(200).json({
+      message: "User Info Updated Successfully",
       user: result,
     });
   });

@@ -40,7 +40,7 @@ class RegisterUseCase {
       ...data,
       verificationCode: hashedCode,
     });
-    const savedUser = await this.userRepo.save(user);
+    const savedUser = await this.userRepo.create(user);
 
     await this.emailSender.sendEmail(
       data.email,

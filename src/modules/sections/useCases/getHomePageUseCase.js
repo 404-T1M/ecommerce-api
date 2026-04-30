@@ -13,6 +13,8 @@ class GetHomePageUseCase {
   }
 
   async execute(loggedInUser) {
+    const hasItems = (items) => Array.isArray(items) && items.length > 0;
+
     const sections = await this.sectionRepo.find(
       { isActive: true },
       {},
@@ -31,7 +33,7 @@ class GetHomePageUseCase {
           );
           section.data.bannerIds = existBanners;
           await section.populate("data.bannerIds");
-          if (section.data.bannerIds.length > 0) {
+          if (hasItems(section.data.bannerIds)) {
             sectionDTO.push(new SectionResponseDTO(section));
           }
           break;
@@ -44,7 +46,7 @@ class GetHomePageUseCase {
           );
           section.data.bannerIds = existBannersInSlider;
           await section.populate("data.bannerIds");
-          if (section.data.bannerIds.length > 0) {
+          if (hasItems(section.data.bannerIds)) {
             sectionDTO.push(new SectionResponseDTO(section));
           }
           break;
@@ -57,7 +59,7 @@ class GetHomePageUseCase {
           );
           section.data.categoryIds = existCategories;
           await section.populate("data.categoryIds");
-          if (section.data.categoryIds.length > 0) {
+          if (hasItems(section.data.categoryIds)) {
             sectionDTO.push(new SectionResponseDTO(section));
           }
           break;
@@ -70,7 +72,7 @@ class GetHomePageUseCase {
           );
           section.data.productIds = existProducts;
           await section.populate("data.productIds");
-          if (section.data.productIds.length > 0) {
+          if (hasItems(section.data.productIds)) {
             sectionDTO.push(new SectionResponseDTO(section));
           }
           break;
@@ -82,7 +84,7 @@ class GetHomePageUseCase {
             { createdAt: -1 },
           );
           section.data.categoryIds = homepageCategories;
-          if (section.data.categoryIds.length > 0) {
+          if (hasItems(section.data.categoryIds)) {
             sectionDTO.push(new SectionResponseDTO(section));
           }
           break;
@@ -99,7 +101,7 @@ class GetHomePageUseCase {
           );
           section.data.productIds = existProductsWithOffers;
 
-          if (section.data.productIds.length > 0) {
+          if (hasItems(section.data.productIds)) {
             sectionDTO.push(new SectionResponseDTO(section));
           }
           break;
@@ -112,7 +114,7 @@ class GetHomePageUseCase {
           );
           section.data.productIds = existNewArrivals;
 
-          if (section.data.productIds.length > 0) {
+          if (hasItems(section.data.productIds)) {
             sectionDTO.push(new SectionResponseDTO(section));
           }
           break;
@@ -125,7 +127,7 @@ class GetHomePageUseCase {
           );
           section.data.productIds = existTopRatedProducts;
 
-          if (section.data.productIds.length > 0) {
+          if (hasItems(section.data.productIds)) {
             sectionDTO.push(new SectionResponseDTO(section));
           }
           break;
@@ -134,7 +136,15 @@ class GetHomePageUseCase {
           const forYouSection = await new GetForYouSectionUseCase().execute(
             loggedInUser,
           );
-          if (forYouSection.data.productIds.length > 0) {
+          const forYouProducts = Array.isArray(forYouSection?.data?.products)
+            ? forYouSection.data.products
+            : Array.isArray(forYouSection?.data?.productIds)
+              ? forYouSection.data.productIds
+              : [];
+
+          forYouSection.data.products = forYouProducts;
+
+          if (hasItems(forYouProducts)) {
             sectionDTO.push(forYouSection);
           }
           break;
@@ -146,7 +156,7 @@ class GetHomePageUseCase {
             { soldCount: -1 },
           );
           section.data.productIds = existMostSellingProducts;
-          if (section.data.productIds.length > 0) {
+          if (hasItems(section.data.productIds)) {
             sectionDTO.push(new SectionResponseDTO(section));
           }
           break;

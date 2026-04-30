@@ -81,8 +81,12 @@ class userRepository {
     return this.findOne({ mobilePhone }, options);
   }
 
-  async save(user) {
+  async create(user) {
     return await User.create(user);
+  }
+
+  async save(user) {
+    return await user.save();
   }
 
   async updateOne(filter, updates) {

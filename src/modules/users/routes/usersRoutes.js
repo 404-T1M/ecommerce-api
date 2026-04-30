@@ -2,6 +2,7 @@ const express = require("express");
 const usersController = require("../controllers/usersController");
 const { protect } = require("../../../middleware/protectedMiddleware");
 const { restrictTo } = require("../../../middleware/roleMiddleware");
+const { uploadSingle } = require("../../../middleware/uploadSingle");
 
 const router = express.Router();
 const controller = new usersController();
@@ -17,6 +18,15 @@ router.post("/auth/login", (req, res, next) => {
 router.get("/auth/me", protect, (req, res, next) => {
   controller.getMe(req, res, next);
 });
+
+router.patch(
+  "/auth/update-my-info",
+  protect,
+  uploadSingle("profileImage"),
+  (req, res, next) => {
+    controller.updateMyInfo(req, res, next);
+  },
+);
 
 router.post("/auth/verify-email", (req, res, next) => {
   controller.verifyEmail(req, res, next);

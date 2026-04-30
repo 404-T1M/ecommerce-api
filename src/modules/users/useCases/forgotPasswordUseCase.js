@@ -27,7 +27,7 @@ class ForgotPasswordUseCase {
     const resetToken = this.tokenService.createToken();
     const hashedToken = this.tokenService.hashToken(resetToken);
 
-    const resetUrl = `${process.env.CLIENT_URL}${resetToken}`;
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
 
     await this.userRepo.updateOne(
       { _id: user._id },
